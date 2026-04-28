@@ -9,6 +9,9 @@ services:
       interval: 5s
       timeout: 2s
       retries: 3
+    networks:
+      - external-network
+      - internal-network
 
   user-service:
     build: ./user-service
@@ -20,4 +23,54 @@ services:
         - EUREKA_SERVER=http://discovery-service:8761/eureka
     ports:
       - 8081:8081
+    networks:
+      - internal-network
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    environment:
+        - EUREKA_SERVER=http://discovery-service:8761/eureka
+    ports:
+      - 8082:8082
+    networks:
+      - internal-network
+
+
+  media-service:
+    build: ./media-service
+    container_name: media-service
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    environment:
+        - EUREKA_SERVER=http://discovery-service:8761/eureka
+    ports:
+      - 8083:8083
+    networks:
+      - internal-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+    environment:
+        - EUREKA_SERVER=http://discovery-service:8761/eureka
+    ports:
+      - 8080:8080
+    networks:
+      - external-network
+      - internal-network
     
+
+networks:
+  external-network:
+    driver: bridge
+  internal-network:
+    internal: true
+      
