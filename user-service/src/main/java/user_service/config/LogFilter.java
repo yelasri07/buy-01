@@ -22,6 +22,7 @@ public class LogFilter extends OncePerRequestFilter {
 
         String userEmail = request.getHeader("Authorization");
         System.out.println(userEmail);
+        System.out.println("€€€€€€€€€€€€€€€€€€€€€ee");
         chain.doFilter(request, response);
     }
 }

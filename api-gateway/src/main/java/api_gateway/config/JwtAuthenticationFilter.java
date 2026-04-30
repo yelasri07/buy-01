@@ -35,18 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        jwt = authHeader.substring(7);
 
         try {
+            jwt = authHeader.substring(7);
             User user = jwtService.ValidateAndExtractUser(jwt);
-
             if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
                         null);
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-
             }
         } catch (Exception e) {
             SecurityContextHolder.clearContext();

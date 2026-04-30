@@ -7,7 +7,6 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
 
-import api_gateway.model.Role;
 import api_gateway.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,13 +17,12 @@ public class JwtService {
 
     private final String secretKey = "y04VbAKcuOebkaYbSwoRNTKimXUaG1RUNoUsrhsPsYR";
 
-
-     private SecretKey getSignInKey() {
+    private SecretKey getSignInKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public User  ValidateAndExtractUser(String token) {
+    public User ValidateAndExtractUser(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(this.getSignInKey())
                 .build()
@@ -39,6 +37,5 @@ public class JwtService {
                 .build();
         return user;
     }
-    
-}
 
+}
