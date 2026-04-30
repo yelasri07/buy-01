@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import product_service.dto.ProductDTO.ProductInput;
 import product_service.dto.ProductDTO.ProductOutput;
+import product_service.exception.NotFoundException;
+import product_service.mapper.ProductMapper;
 import product_service.model.Product;
 import product_service.repository.ProductRepository;
 
@@ -24,15 +26,13 @@ public class ProductService {
                 .build();
 
         Product createdProduct = this.productRepository.insert(product);
+        return ProductMapper.toProductOutputDto(createdProduct);
+    }
 
-        return ProductOutput.builder()
-                .id(createdProduct.getId())
-                .name(createdProduct.getName())
-                .discription(createdProduct.getDescription())
-                .price(createdProduct.getPrice())
-                .quantity(createdProduct.getQuantity())
-                .userId(createdProduct.getUserId())
-                .build();
+    public ProductOutput getProduct(String productId) {
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
+        return ProductMapper.toProductOutputDto(product);
     }
 
 }
