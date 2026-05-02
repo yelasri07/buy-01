@@ -14,6 +14,11 @@ spring:
               uri: lb://product-service
               predicates:
                 - Path=/api/products/**
+            - id: media-service
+              uri: lb://media-service
+              predicates:
+                - Path=/media/**
+
             
 
 eureka:
