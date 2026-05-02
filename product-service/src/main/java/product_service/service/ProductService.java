@@ -1,5 +1,8 @@
 package product_service.service;
 
+import java.util.Map;
+
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,40 @@ public class ProductService {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
         return ProductMapper.toProductOutputDto(product);
+    }
+
+    public ProductOutput updateProduct(String productId, ProductInput productData, String userId) {
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
+
+        if (!userId.equals(product.getUserId())) {
+            throw new AccessDeniedException("Cannot delete products of others!");
+        }
+
+        product.setName(productData.name());
+        product.setDescription(productData.description());
+        product.setPrice(productData.price());
+        product.setQuantity(productData.quantity());
+
+        this.productRepository.save(product);
+
+        return ProductMapper.toProductOutputDto(product);
+    }
+
+    public Map<String, String> deleteProduct(String productId, String userId) {
+        Product product = this.productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
+
+        if (!userId.equals(product.getUserId())) {
+            throw new AccessDeniedException("Cannot delete products of others!");
+        }
+
+        this.productRepository.delete(product);
+
+        return Map.of(
+            "productId", product.getId(),
+            "message", "Product deleted successfully!"
+        );
     }
 
 }

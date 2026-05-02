@@ -1,10 +1,14 @@
 package product_service.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,13 +29,24 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public ProductOutput post(@RequestBody @Valid ProductInput productDate, @AuthenticationPrincipal String userId) {
-        return this.productService.createProduct(productDate, userId);
+    public ProductOutput post(@RequestBody @Valid ProductInput productData, @AuthenticationPrincipal String userId) {
+        return this.productService.createProduct(productData, userId);
     }
 
     @GetMapping("/{id}")
     public ProductOutput get(@PathVariable("id") String productId) {
         return this.productService.getProduct(productId);
+    }
+
+    @PutMapping("/{id}")
+    public ProductOutput update(@PathVariable("id") String productId, @RequestBody @Valid ProductInput productData,
+            @AuthenticationPrincipal String userId) {
+        return this.productService.updateProduct(productId, productData, userId);
+    }
+
+    @DeleteMapping("/{id}")
+    public Map<String, String> delete(@PathVariable("id") String productId, @AuthenticationPrincipal String userId) {
+        return this.productService.deleteProduct(productId, userId);
     }
 
 }
