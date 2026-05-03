@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = jwtService.ValidateAndExtractUser(jwt);
             if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
-                        Set.of(new SimpleGrantedAuthority(user.getRole())));
+                        Set.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase())));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {

@@ -24,6 +24,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("SELLER")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("SELLER")
                         .anyRequest().authenticated())   
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

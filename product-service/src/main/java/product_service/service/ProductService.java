@@ -43,7 +43,7 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
 
         if (!userId.equals(product.getUserId())) {
-            throw new AccessDeniedException("Cannot delete products of others!");
+            throw new AccessDeniedException("Cannot update products of others!");
         }
 
         product.setName(productData.name());
