@@ -13,6 +13,7 @@ import lombok.Data;
 public class Media {
     @Id
     private String id;
+    @Field("image_path")
     private String imagePath;
     @Field("product_id")
     private String productId;
