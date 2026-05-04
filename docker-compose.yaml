@@ -2,11 +2,10 @@ services:
   kafka:
     image: apache/kafka
     container_name: kafka
-    user: root
     ports:
       - "9092:9092"
     volumes:
-      - kafka-data:/opt/kafka/logs
+       - kafka-data:/data/kafka
       
   discovery-service:
     build: ./discovery-service
@@ -74,7 +73,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - user_mongodb_data:/data/user_db
+      - user_mongodb_data:/data/db
 
   product-db:
     image: mongo
@@ -87,7 +86,7 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - product_mongodb_data:/data/product_db
+      - product_mongodb_data:/data/db
 
   media-db:
     image: mongo
@@ -99,7 +98,7 @@ services:
     ports:
       - "27019:27017"
     volumes:
-      - media_mongodb_data:/data/media_db
+      - media_mongodb_data:/data/db
 
 volumes:
   user_mongodb_data:
