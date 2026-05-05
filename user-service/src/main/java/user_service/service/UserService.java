@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import user_service.model.User;
+import user_service.model.DTO.UserDTO.AvatarInput;
 import user_service.model.DTO.UserDTO.UserOutput;
 import user_service.repository.UserRepository;
 
@@ -20,6 +21,17 @@ public class UserService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("user_details", UserToUserOutput(user));
+
+        return response;
+    }
+
+    public Map<String, Object> updateAvatar(AvatarInput avatarInput) {
+        User user = userRepository.findById(avatarInput.userId()).get();
+        user.setAvatarUrl(avatarInput.avatarUrl());
+        userRepository.save(user);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Avatar updated successfully");
 
         return response;
     }
