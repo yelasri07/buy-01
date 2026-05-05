@@ -15,17 +15,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
+import media_service.dto.ProductDTO.ProductInput;
 import media_service.exception.BadRequestException;
 import media_service.model.Media;
 import media_service.model.Target;
 import media_service.model.dto.MediaDTO.MediaInput;
 import media_service.repository.MediaRepository;
+import media_service.restApi.ProductClient;
 
 @Service
 @RequiredArgsConstructor
 public class MediaService {
 
     private final MediaRepository mediaRepository;
+    private final ProductClient productClient;
     private String product_dir = "upload-dir/products";
     private String user_dir = "upload-dir/avatars";
 
@@ -45,7 +48,7 @@ public class MediaService {
         }
 
         if (mediaInput.target() == Target.PRODUCT) {
-
+            ProductInput product = productClient.getProduct(mediaInput.targetId());
         }
 
         String location = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
