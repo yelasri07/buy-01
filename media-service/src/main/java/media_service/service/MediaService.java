@@ -28,7 +28,7 @@ public class MediaService {
     private String product_dir = "upload-dir/products";
     private String user_dir = "upload-dir/avatars";
 
-    public Map<String, Object> uploadMedia(MediaInput mediaInput) {
+    public Map<String, Object> uploadMedia(MediaInput mediaInput, String userId) {
 
         if (mediaInput.files() == null || mediaInput.files().length == 0) {
             throw new BadRequestException("No files uploaded");
@@ -42,6 +42,10 @@ public class MediaService {
             throw new BadRequestException("Users accept only one media");
         } else if (mediaInput.target() == Target.PRODUCT && mediaInput.files().length > 5) {
             throw new BadRequestException("Products accept maximum 5 media");
+        }
+
+        if (mediaInput.target() == Target.PRODUCT) {
+            
         }
 
         String location = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
