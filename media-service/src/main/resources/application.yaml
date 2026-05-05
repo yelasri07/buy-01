@@ -13,7 +13,7 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: mediaGroup
-
+        
 server:
   port: 8083
 

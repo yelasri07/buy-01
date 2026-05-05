@@ -25,7 +25,7 @@ public class MediaController {
     private final MediaProducerService mediaProducerService;
 
     @PostMapping("/images")
-    public Map<String, Object> uploadImage(@ModelAttribute @Valid MediaInput media) {
+    public Map<String, Object> uploadImage(@ModelAttribute @Valid MediaInput media) throws Exception {
         mediaProducerService.sendMessage("my-topic", "uploading avatar");
         return mediaService.uploadMedia(media);
     }
