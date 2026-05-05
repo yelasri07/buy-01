@@ -30,7 +30,6 @@ public class MediaService {
     private String user_dir = "upload-dir/avatars";
 
     public Map<String, Object> uploadMedia(MediaInput mediaInput, String userId) {
-
         if (mediaInput.files() == null || mediaInput.files().length == 0) {
             throw new BadRequestException("No files uploaded");
         }
@@ -46,39 +45,14 @@ public class MediaService {
         }
 
         if (mediaInput.target() == Target.PRODUCT) {
-            
+
         }
 
         String location = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
         Map<String, Object> response = new HashMap<>();
         List<String> message = new ArrayList<>();
         for (MultipartFile file : mediaInput.files()) {
-            try {
-                Path uploadPath = Paths.get(location);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                // get media extension
-                String fileName = file.getOriginalFilename();
-                String extension = "";
-
-                if (fileName != null && fileName.contains(".")) {
-                    extension = fileName.substring(fileName.lastIndexOf("."));
-                }
-                fileName = mediaInput.target() == Target.PRODUCT
-                        ? UUID.randomUUID().toString() + extension
-                        : mediaInput.targetId() + extension;
-
-                Path filePath = uploadPath.resolve(fileName);
-                try (FileOutputStream fos = new FileOutputStream(filePath.toString())) {
-                    byte[] bytes = file.getBytes();
-                    fos.write(bytes);
-                }
-                message.add("/media/images/" + filePath);
-
-            } catch (IOException | IllegalStateException e) {
-                throw new InternalError("Upload failed: " + e.getMessage());
-            }
+            message.add(this.saveFile(mediaInput, location, file));
         }
 
         if (mediaInput.target() == Target.PRODUCT) {
@@ -91,6 +65,36 @@ public class MediaService {
         response.put("files", message);
         return response;
 
+    }
+
+    private String saveFile(MediaInput mediaInput, String location, MultipartFile file) {
+        try {
+            Path uploadPath = Paths.get(location);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            // get media extension
+            String fileName = file.getOriginalFilename();
+            String extension = "";
+
+            if (fileName != null && fileName.contains(".")) {
+                extension = fileName.substring(fileName.lastIndexOf("."));
+            }
+            fileName = mediaInput.target() == Target.PRODUCT
+                    ? UUID.randomUUID().toString() + extension
+                    : mediaInput.targetId() + extension;
+
+            Path filePath = uploadPath.resolve(fileName);
+            try (FileOutputStream fos = new FileOutputStream(filePath.toString())) {
+                byte[] bytes = file.getBytes();
+                fos.write(bytes);
+            }
+
+            return "/media/images/" + filePath;
+
+        } catch (IOException | IllegalStateException e) {
+            throw new InternalError("Upload failed: " + e.getMessage());
+        }
     }
 
 }
