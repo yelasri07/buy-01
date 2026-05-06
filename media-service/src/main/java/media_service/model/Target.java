@@ -2,5 +2,6 @@ package media_service.model;
 
 public enum Target {
     PRODUCT,
-    USER
+    USER,
+    UPDATE_PRODUCT
 }

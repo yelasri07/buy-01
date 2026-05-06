@@ -47,7 +47,8 @@ public class MediaService {
 
         if (mediaInput.target() == Target.USER && mediaInput.files().length > 1) {
             throw new BadRequestException("Users accept only one media");
-        } else if (mediaInput.target() == Target.PRODUCT && mediaInput.files().length > 5) {
+        } else if ((mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT))
+                && mediaInput.files().length > 5) {
             throw new BadRequestException("Products accept maximum 5 media");
         }
 
@@ -55,17 +56,22 @@ public class MediaService {
             throw new AccessDeniedException("Cannot update other users avatar");
         }
 
-        if (mediaInput.target() == Target.PRODUCT) {
+        if (mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT)) {
             ProductInput product = productClient.getProduct(mediaInput.targetId());
             if (!product.user_id().equals(userId)) {
                 throw new AccessDeniedException("Cannot update other users products");
             }
 
-            var mediaSize = this.mediaRepository.findByProductId(product.id()).size();
-            if (mediaSize > 0) {
-                throw new BadRequestException("Cannot add another media product");
+            if (mediaInput.target().equals(Target.PRODUCT)) {
+                var mediaSize = this.mediaRepository.findByProductId(product.id()).size();
+                if (mediaSize > 0) {
+                    throw new BadRequestException("Cannot add another media product");
+                }
+            } else {
+                // remove old images
             }
         }
+
         String subDir = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
         String location = "upload-dir/" + subDir;
         Map<String, Object> response = new HashMap<>();
