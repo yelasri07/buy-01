@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import media_service.dto.ProductDTO.ProductInput;
-import media_service.dto.UserDTO.AvatarInput;
 import media_service.exception.BadRequestException;
 import media_service.model.Media;
 import media_service.model.Target;
@@ -52,6 +51,10 @@ public class MediaService {
             throw new BadRequestException("Products accept maximum 5 media");
         }
 
+        if (mediaInput.target() == Target.USER && !mediaInput.targetId().equals(userId)) {
+            throw new AccessDeniedException("Cannot update other users avatar");
+        }
+
         if (mediaInput.target() == Target.PRODUCT) {
             ProductInput product = productClient.getProduct(mediaInput.targetId());
             if (!product.user_id().equals(userId)) {
@@ -68,7 +71,15 @@ public class MediaService {
         Map<String, Object> response = new HashMap<>();
         List<String> message = new ArrayList<>();
         for (MultipartFile file : mediaInput.files()) {
+
+            if (mediaInput.target() == Target.USER) {
+                String avatarUrl = "/media/images/avatars/" + userId + "/"
+                        + FileValidator.getExtensionFromMimeType(file);
+                userClient.updateAvatar(avatarUrl);
+            }
+
             String filePath = this.saveFile(mediaInput, location, file, subDir);
+
             if (mediaInput.target() == Target.PRODUCT) {
                 Media media = Media.builder()
                         .productId(mediaInput.targetId())
@@ -76,14 +87,10 @@ public class MediaService {
                         .build();
                 mediaRepository.save(media);
             }
+
             message.add(filePath);
         }
 
-        if (mediaInput.target() == Target.USER) {
-            AvatarInput avatarInput = new AvatarInput(userId, message.get(0));
-            Map<String, Object> res = userClient.updateAvatar(avatarInput);
-            System.out.println(res);
-        }
         response.put("files", message);
         return response;
 
