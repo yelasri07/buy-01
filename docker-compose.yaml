@@ -59,6 +59,7 @@ services:
         condition: service_started
     environment:
       - EUREKA_SERVER=http://discovery-service:8761/eureka
+      - MONGO_URL=mongodb://buy01:buy01@user-db:27017/buy01?authSource=admin
 
   product-service:
     build: ./product-service
@@ -70,6 +71,7 @@ services:
         condition: service_started
     environment:
       - EUREKA_SERVER=http://discovery-service:8761/eureka
+      - MONGO_URL=mongodb://buy01:buy01@product-db:27017/buy01?authSource=admin
 
   media-service:
     build: ./media-service
@@ -79,8 +81,14 @@ services:
         condition: service_healthy
       media-db:
         condition: service_started
+      broker:
+        condition: service_started
     environment:
       - EUREKA_SERVER=http://discovery-service:8761/eureka
+      - BROKER_URL=broker:9092
+      - MONGO_URL=mongodb://buy01:buy01@media-db:27017/buy01?authSource=admin
+
+
 
   user-db:
     image: mongo

@@ -28,6 +28,12 @@ public class SecurityConfig {
     }
 
     @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return username -> userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+    }
+
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

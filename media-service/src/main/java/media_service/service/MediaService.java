@@ -34,8 +34,8 @@ public class MediaService {
     private final MediaRepository mediaRepository;
     private final ProductClient productClient;
     private final UserClient userClient;
-    private String product_dir = "upload-dir/products";
-    private String user_dir = "upload-dir/avatars";
+    private String product_dir = "products";
+    private String user_dir = "avatars";
 
     public Map<String, Object> uploadMedia(MediaInput mediaInput, String userId) {
         if (mediaInput.files() == null || mediaInput.files().length == 0) {
@@ -63,12 +63,12 @@ public class MediaService {
                 throw new BadRequestException("Cannot add another media product");
             }
         }
-
-        String location = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
+        String subDir = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
+        String location = "upload-dir/" + subDir;
         Map<String, Object> response = new HashMap<>();
         List<String> message = new ArrayList<>();
         for (MultipartFile file : mediaInput.files()) {
-            String filePath = this.saveFile(mediaInput, location, file);
+            String filePath = this.saveFile(mediaInput, location, file, subDir);
             if (mediaInput.target() == Target.PRODUCT) {
                 Media media = Media.builder()
                         .productId(mediaInput.targetId())
@@ -89,7 +89,7 @@ public class MediaService {
 
     }
 
-    private String saveFile(MediaInput mediaInput, String location, MultipartFile file) {
+    private String saveFile(MediaInput mediaInput, String location, MultipartFile file, String subDir) {
         try {
             Path uploadPath = Paths.get(location);
             if (!Files.exists(uploadPath)) {
@@ -112,7 +112,7 @@ public class MediaService {
                 fos.write(bytes);
             }
 
-            return "/media/images/" + filePath;
+            return "/media/images/" + subDir + "/" + filePath.getFileName();
 
         } catch (IOException | IllegalStateException e) {
             throw new InternalError("Upload failed: " + e.getMessage());
