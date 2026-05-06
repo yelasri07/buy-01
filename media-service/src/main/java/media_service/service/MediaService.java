@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +54,14 @@ public class MediaService {
 
         if (mediaInput.target() == Target.PRODUCT) {
             ProductInput product = productClient.getProduct(mediaInput.targetId());
-            System.out.println(product);
+            if (!product.user_id().equals(userId)) {
+                throw new AccessDeniedException("Cannot update other users products");
+            }
+
+            var mediaSize = this.mediaRepository.findByProductId(product.id()).size();
+            if (mediaSize > 0) {
+                throw new BadRequestException("Cannot add another media product");
+            }
         }
 
         String location = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
