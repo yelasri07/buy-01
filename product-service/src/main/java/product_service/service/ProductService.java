@@ -1,5 +1,6 @@
 package product_service.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -12,12 +13,14 @@ import product_service.exception.NotFoundException;
 import product_service.mapper.ProductMapper;
 import product_service.model.Product;
 import product_service.repository.ProductRepository;
+import product_service.restApi.MediaClient;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final MediaClient mediaClient;
 
     public ProductOutput createProduct(ProductInput productData, String userId) {
         Product product = Product.builder()
@@ -35,6 +38,10 @@ public class ProductService {
     public ProductOutput getProduct(String productId) {
         Product product = this.productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
+
+        List<String> productFiles = this.mediaClient.getProductMedia(product.getId());
+
+        System.out.println(productFiles);
         return ProductMapper.toProductOutputDto(product);
     }
 

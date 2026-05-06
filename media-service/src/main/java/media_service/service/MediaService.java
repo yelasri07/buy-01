@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +22,7 @@ import media_service.exception.BadRequestException;
 import media_service.model.Media;
 import media_service.model.Target;
 import media_service.model.dto.MediaDTO.MediaInput;
+import media_service.model.dto.MediaDTO.MediaPathOutput;
 import media_service.repository.MediaRepository;
 import media_service.restApi.ProductClient;
 import media_service.restApi.UserClient;
@@ -117,6 +117,11 @@ public class MediaService {
         } catch (IOException | IllegalStateException e) {
             throw new InternalError("Upload failed: " + e.getMessage());
         }
+    }
+
+    public List<String> getProductMedia(String productId) {
+        List<MediaPathOutput> media = this.mediaRepository.findImagesPathByProductId(productId);
+        return media.stream().map((ele) -> ele.imagePath()).toList();
     }
 
 }

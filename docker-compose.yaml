@@ -88,8 +88,6 @@ services:
       - BROKER_URL=broker:9092
       - MONGO_URL=mongodb://buy01:buy01@media-db:27017/buy01?authSource=admin
 
-
-
   user-db:
     image: mongo
     container_name: user_mongodb

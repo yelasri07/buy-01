@@ -19,4 +19,10 @@ public class MediaDTO {
             MultipartFile[] files) {
     }
 
+    public static record MediaPathOutput(
+        @JsonProperty("image_path")
+        String imagePath
+    ) {
+    }
+
 }
