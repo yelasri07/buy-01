@@ -49,6 +49,43 @@ services:
     ports:
       - 8080:8080
 
+  user-db:
+    image: mongo
+    container_name: user_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - "27017:27017"
+    volumes:
+      - user_mongodb_data:/data/db
+
+  product-db:
+    image: mongo
+    container_name: product_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - "27018:27017"
+    volumes:
+      - product_mongodb_data:/data/db
+
+  media-db:
+    image: mongo
+    container_name: media_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+    ports:
+      - "27019:27017"
+    volumes:
+      - media_mongodb_data:/data/db
+
   user-service:
     build: ./user-service
     container_name: user-service
@@ -87,43 +124,6 @@ services:
       - EUREKA_SERVER=http://discovery-service:8761/eureka
       - BROKER_URL=broker:9092
       - MONGO_URL=mongodb://buy01:buy01@media-db:27017/buy01?authSource=admin
-
-  user-db:
-    image: mongo
-    container_name: user_mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${DB_NAME}
-    ports:
-      - "27017:27017"
-    volumes:
-      - user_mongodb_data:/data/db
-
-  product-db:
-    image: mongo
-    container_name: product_mongodb
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${DB_NAME}
-    ports:
-      - "27018:27017"
-    volumes:
-      - product_mongodb_data:/data/db
-
-  media-db:
-    image: mongo
-    container_name: media_mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${DB_NAME}
-    ports:
-      - "27019:27017"
-    volumes:
-      - media_mongodb_data:/data/db
 
 volumes:
   user_mongodb_data:
