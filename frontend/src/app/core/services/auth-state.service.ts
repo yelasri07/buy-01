@@ -9,8 +9,12 @@ import { User } from '../interfaces/user.interface';
 export class AuthStateService {
   private http = inject(HttpClient)
 
-  register(userDate: any) {
-    return this.http.post<User>(API.REGISTER, userDate)
+  register(userData: any) {
+    return this.http.post<User>(API.REGISTER, userData)
+  }
+
+  login(userData: any) {
+    return this.http.post<User>(API.LOGIN, userData)
   }
 
 }
