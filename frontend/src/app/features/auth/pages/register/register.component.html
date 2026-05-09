@@ -1,12 +1,19 @@
-<form class="text-center">
+<form class="text-center auth-form-ipts" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <p class="text-xs -mt-8.5 mb-10 text-accent">Please login to your account</p>
     <div>
-        <input placeholder="Name" type="text" class="bg-secondary mb-3 px-8 py-4 rounded-lg outline-none w-[80%]">
-        <input placeholder="Email address" type="text"
-            class="bg-secondary mb-3 px-8 py-4 rounded-lg outline-none w-[80%]">
-        <input placeholder="Password" type="password"
-            class="bg-secondary mb-10 px-8 py-4 rounded-lg outline-none w-[80%]">
+        <input formControlName="name" placeholder="Name" type="text">
+        @if (name.invalid) {
+        <span class="block text-red-500 -mt-3 mb-3">
+            @if (name.hasError('required')) {
+            User name cannot be empty
+            }
+        </span>
+        }
+        <input formControlName="email" placeholder="Email address" type="email">
+        <input formControlName="password" placeholder="Password" type="password">
     </div>
-    <button class="bg-dark mb-5 text-primary w-[80%] p-4 text-sm rounded-lg hover:bg-accent cursor-pointer duration-150">Register</button>
-    <p><span>Already have an account?</span> <a class="text-accent underline ml-1 cursor-pointer">Signin</a></p>
+    <button
+        class="bg-dark mb-5 text-primary w-[90%] p-4 text-sm rounded-lg hover:bg-accent cursor-pointer duration-150">Register</button>
+    <p routerLink="/auth/login"><span>Already have an account?</span> <a
+            class="text-accent underline ml-1 cursor-pointer">Sign-in</a></p>
 </form>
