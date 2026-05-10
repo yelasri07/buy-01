@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from "@angular/router";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthStateService } from '../../../../core/services/auth-state.service';
 
 @Component({
@@ -30,9 +30,11 @@ export class RegisterComponent {
         console.log(res)
       },
       error: err => {
-        if (err.validationErrors) {
-          
+        console.log(err)
+        if (err.error?.validationErrors) {
+          console.log(err.error?.validationErrors)
         }
+
       }
     })
   }

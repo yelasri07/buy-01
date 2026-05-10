@@ -1,1 +1,5 @@
 <router-outlet />
+
+@if (messageError()) {
+<app-error-popup [message]="messageError()" />
+}

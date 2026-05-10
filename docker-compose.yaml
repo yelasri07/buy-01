@@ -64,7 +64,6 @@ services:
   product-db:
     image: mongo
     container_name: product_mongodb
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
