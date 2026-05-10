@@ -3,6 +3,9 @@ package product_service.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,16 @@ public class ProductService {
 
         Product createdProduct = this.productRepository.insert(product);
         return ProductMapper.toProductOutputDto(createdProduct, null);
+    }
+
+    public void getProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        List<ProductOutput> products = this.productRepository.findAll(pageable)
+                .getContent().stream().map(product -> ProductMapper.toProductOutputDto(product, null)).toList();
+
+        List<String> productIds = products.stream().map(product -> product.id()).toList();
+
+        
     }
 
     public ProductOutput getProduct(String productId) {

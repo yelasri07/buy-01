@@ -8,6 +8,7 @@ import { User } from '../interfaces/user.interface';
 })
 export class AuthStateService {
   private http = inject(HttpClient)
+  private currentUser: User | null = null;
 
   register(userData: any) {
     return this.http.post<User>(API.REGISTER, userData)
@@ -15,6 +16,10 @@ export class AuthStateService {
 
   login(userData: any) {
     return this.http.post<User>(API.LOGIN, userData)
+  }
+
+  getCurrentUser() {
+    return this.currentUser
   }
 
 }
