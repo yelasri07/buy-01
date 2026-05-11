@@ -2,6 +2,8 @@ package product_service.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,13 +12,16 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import product_service.dto.UserDTO;
 import product_service.dto.ProductDTO.ProductInput;
 import product_service.dto.ProductDTO.ProductOutput;
+import product_service.exception.BadRequestException;
 import product_service.exception.NotFoundException;
 import product_service.mapper.ProductMapper;
 import product_service.model.Product;
 import product_service.repository.ProductRepository;
 import product_service.restApi.MediaClient;
+import product_service.restApi.UserClient;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final MediaClient mediaClient;
+    private final UserClient userClient;
 
     public ProductOutput createProduct(ProductInput productData, String userId) {
         Product product = Product.builder()
@@ -35,23 +41,27 @@ public class ProductService {
                 .build();
 
         Product createdProduct = this.productRepository.insert(product);
-        return ProductMapper.toProductOutputDto(createdProduct, null);
+        return ProductMapper.toProductOutputDto(createdProduct, null, null);
     }
 
     public List<ProductOutput> getProducts(int page, int size) {
         if (size > 100) {
-            size = 100;
+            throw new BadRequestException("Max size is: 100");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
         List<Product> entities = this.productRepository.findAll(pageable).getContent();
 
-        List<String> productIds = entities.stream().map(product -> product.getId()).toList();
+        // send one request to get users for each product
+        Set<String> userIds = entities.stream().map(product -> product.getUserId()).collect(Collectors.toSet());
+        Map<String, UserDTO> users = this.userClient.getUserProducts(userIds);
 
+        // send one request to get media for each product
+        List<String> productIds = entities.stream().map(product -> product.getId()).toList();
         Map<String, List<String>> mediaProducts = this.mediaClient.getMediaProducts(productIds);
 
         List<ProductOutput> products = entities.stream().map(product -> ProductMapper.toProductOutputDto(product,
-                mediaProducts.get(product.getId()))).toList();
+                mediaProducts.get(product.getId()), users.get(product.getUserId()))).toList();
 
         return products;
     }
@@ -61,7 +71,7 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Whoops! product not found"));
 
         List<String> productFiles = this.mediaClient.getProductMedia(product.getId());
-        return ProductMapper.toProductOutputDto(product, productFiles);
+        return ProductMapper.toProductOutputDto(product, productFiles, null);
     }
 
     public ProductOutput updateProduct(String productId, ProductInput productData, String userId) {
@@ -79,7 +89,7 @@ public class ProductService {
 
         this.productRepository.save(product);
 
-        return ProductMapper.toProductOutputDto(product, null);
+        return ProductMapper.toProductOutputDto(product, null, null);
     }
 
     public Map<String, String> deleteProduct(String productId, String userId) {

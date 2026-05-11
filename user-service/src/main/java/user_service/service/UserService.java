@@ -1,7 +1,10 @@
 package user_service.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -44,6 +47,15 @@ public class UserService {
                 .role(user.getRole().name())
                 .avatarUrl(user.getAvatarUrl())
                 .build();
+    }
+
+    public Map<String, UserOutput> getUserProducts(Set<String> userIds) {
+        List<User> users = this.userRepository.findByIdIn(userIds);
+
+        return users.stream()
+                .collect(Collectors.toMap(User::getId, user -> UserOutput.builder()
+                        .name(user.getName())
+                        .avatarUrl(user.getAvatarUrl()).build()));
     }
 
 }

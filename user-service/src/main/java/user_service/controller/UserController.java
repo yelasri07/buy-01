@@ -2,15 +2,17 @@ package user_service.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import user_service.model.DTO.UserDTO.AvatarInput;
+import user_service.model.DTO.UserDTO.UserOutput;
 import user_service.service.UserService;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +38,11 @@ public class UserController {
     public Map<String, Object> updateAvatar(@RequestBody String avatarUrl, @AuthenticationPrincipal String id) {
         AvatarInput avatarInput = new AvatarInput(id, avatarUrl);
         return userService.updateAvatar(avatarInput);
+    }
+
+    @PostMapping("/products")
+    public Map<String, UserOutput> getUserProducts(@RequestBody Set<String> userIds) {
+        return this.userService.getUserProducts(userIds);
     }
 
 }

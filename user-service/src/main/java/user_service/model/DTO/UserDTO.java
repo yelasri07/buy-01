@@ -1,5 +1,7 @@
 package user_service.model.DTO;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
@@ -12,6 +14,7 @@ public class UserDTO {
     }
 
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static record UserOutput(
             String id,
             String name,

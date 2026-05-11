@@ -39,6 +39,7 @@ public class ProductDTO {
             Double price,
             Integer quantity,
             @JsonProperty("user_id") String userId,
+            UserDTO user,
             List<String> files) {
     }
 }
