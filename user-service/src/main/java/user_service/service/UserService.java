@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import user_service.model.User;
 import user_service.model.DTO.UserDTO.AvatarInput;
 import user_service.model.DTO.UserDTO.UserOutput;
+import user_service.model.User;
 import user_service.repository.UserRepository;
 
 @Service

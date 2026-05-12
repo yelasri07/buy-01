@@ -6,6 +6,11 @@ spring:
     mongodb:
       uri: ${MONGO_URL:mongodb://buy01:buy01@localhost:27018/buy01?authSource=admin}
 
+  kafka:
+    bootstrap-servers: ${BROKER_URL:localhost:9092}
+    consumer:
+      group-id: productGroup
+
 server:
   port: 8082
   servlet:

@@ -12,11 +12,12 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import product_service.dto.UserDTO;
 import product_service.dto.ProductDTO.ProductInput;
 import product_service.dto.ProductDTO.ProductOutput;
+import product_service.dto.UserDTO;
 import product_service.exception.BadRequestException;
 import product_service.exception.NotFoundException;
+import product_service.kafka.ProductProducerService;
 import product_service.mapper.ProductMapper;
 import product_service.model.Product;
 import product_service.repository.ProductRepository;
@@ -30,6 +31,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final MediaClient mediaClient;
     private final UserClient userClient;
+    private final ProductProducerService productProducerService;
 
     public ProductOutput createProduct(ProductInput productData, String userId) {
         Product product = Product.builder()
@@ -101,6 +103,8 @@ public class ProductService {
         }
 
         this.productRepository.delete(product);
+
+        this.productProducerService.sendMessage("delete-media", product.getId());
 
         return Map.of(
                 "productId", product.getId(),

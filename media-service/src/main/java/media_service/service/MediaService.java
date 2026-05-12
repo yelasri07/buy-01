@@ -30,8 +30,8 @@ public class MediaService {
     private final UserClient userClient;
     private final CloudinaryService cloudinaryService;
 
-    private String product_dir = "products";
-    private String user_dir = "avatars";
+    private final String product_dir = "products";
+    private final String user_dir = "avatars";
 
     public Map<String, Object> uploadMedia(MediaInput mediaInput, String userId) {
         if (mediaInput.files() == null || mediaInput.files().length == 0) {
