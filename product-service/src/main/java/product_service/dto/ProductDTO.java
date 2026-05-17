@@ -9,9 +9,9 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
-import jakarta.validation.constraints.PositiveOrZero;
 
 public class ProductDTO {
 
@@ -39,7 +39,8 @@ public class ProductDTO {
             Double price,
             Integer quantity,
             @JsonProperty("user_id") String userId,
-            UserDTO user,
+            @JsonProperty("user_infos")
+            UserDTO userInfos,
             List<String> files) {
     }
 }

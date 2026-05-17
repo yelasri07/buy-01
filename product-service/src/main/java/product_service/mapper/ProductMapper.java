@@ -2,8 +2,8 @@ package product_service.mapper;
 
 import java.util.List;
 
-import product_service.dto.UserDTO;
 import product_service.dto.ProductDTO.ProductOutput;
+import product_service.dto.UserDTO;
 import product_service.model.Product;
 
 public class ProductMapper {
@@ -16,7 +16,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .userId(product.getUserId())
-                .user(user)
+                .userInfos(user)
                 .files(files)
                 .build();
     }
