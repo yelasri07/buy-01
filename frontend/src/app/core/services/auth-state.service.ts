@@ -1,25 +1,74 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { API } from '../config/api';
 import { User } from '../interfaces/user.interface';
+import { tap } from 'rxjs';
+import { StorageService } from './storage.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthStateService {
   private http = inject(HttpClient)
-  private currentUser: User | null = null;
+  private storage = inject(StorageService)
+  
+  private _currentUser = signal<User | null>(null);
+  readonly currentUser = computed(() => this._currentUser());
+  readonly isAuthenticated = computed(() => !!this._currentUser());
+
+  constructor() {
+    this.restoreSession();
+  }
+
+  private restoreSession() {
+    const token = this.storage.getToken();
+    if (token) {
+      this.setUserFromToken(token);
+    }
+  }
+
+  private setUserFromToken(token: string) {
+    try {
+      const decoded: any = jwtDecode(token);
+      this._currentUser.set({
+        id: decoded.id,
+        name: decoded.name,
+        email: decoded.sub,
+        role: decoded.role,
+        avatar: decoded.avatar || `https://ui-avatars.com/api/?name=${decoded.name}&background=random`,
+        token: token
+      });
+    } catch (e) {
+      console.error('Error decoding token', e);
+      this.logout();
+    }
+  }
 
   register(userData: any) {
-    return this.http.post<User>(API.REGISTER, userData)
+    return this.http.post<{token: string}>(API.REGISTER, userData).pipe(
+      tap(res => {
+        this.storage.setToken(res.token);
+        this.setUserFromToken(res.token);
+      })
+    )
   }
 
   login(userData: any) {
-    return this.http.post<User>(API.LOGIN, userData)
+    return this.http.post<{token: string}>(API.LOGIN, userData).pipe(
+      tap(res => {
+        this.storage.setToken(res.token);
+        this.setUserFromToken(res.token);
+      })
+    )
+  }
+
+  logout() {
+    this.storage.clearAuth();
+    this._currentUser.set(null);
   }
 
   getCurrentUser() {
-    return this.currentUser
+    return this._currentUser()
   }
-
 }

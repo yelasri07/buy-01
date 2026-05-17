@@ -1,51 +1,84 @@
-<div class="max-w-sm rounded-xl overflow-hidden shadow-lg border border-secondary bg-primary">
-  <!-- Product Image Placeholder -->
-  <div class="h-48 bg-secondary flex items-center justify-center">
-    <!-- <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-    </svg> -->
-    <img class="w-full h-full object-cover" src="https://learn.zone01oujda.ma/api/content/root/01-edu_module/content/buy-01/Database-Design.png" alt="">
+<div class="group relative max-w-sm overflow-hidden rounded-2xl border border-secondary bg-primary shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+
+  <!-- Floating Price Tag -->
+  <div class="absolute right-4 top-4 z-10 rounded-full bg-dark/80 px-3 py-1.5 text-sm font-bold text-primary backdrop-blur-md shadow-lg transition-transform group-hover:scale-110">
+    {{ product().price | currency }}
   </div>
 
-  <div class="p-5 flex flex-col gap-3">
-    <!-- Header: Name & Price -->
-    <div class="flex justify-between items-start">
-      <h2 class="text-xl font-bold text-dark leading-tight">
-        <!-- Product Name -->
+  <!-- Product Image Container -->
+  <div class="relative h-56 overflow-hidden bg-secondary">
+    <img
+      [src]="productImage()"
+      [alt]="product().name"
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+    >
+
+    @if (isOutOfStock()) {
+      <div class="absolute inset-0 flex items-center justify-center bg-dark/40 backdrop-blur-[2px]">
+        <span class="rounded-lg bg-red-500 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white shadow-xl">
+          Out of Stock
+        </span>
+      </div>
+    }
+  </div>
+
+  <div class="p-6">
+    <!-- Header: Name -->
+    <div class="mb-3">
+      <h2 class="text-xl font-bold tracking-tight text-dark line-clamp-1">
         {{ product().name }}
       </h2>
-      <span class="text-lg font-semibold text-accent">
-        $99.99
-      </span>
     </div>
 
-    <!-- Description with Truncation (3 dots) -->
-    <p class="text-accent text-sm line-clamp-2">
-      <!-- This is a long description that will automatically show three dots after the second line of text, ensuring the card height remains consistent across your product grid. -->
+    <!-- Description -->
+    <p class="mb-4 text-sm leading-relaxed text-accent line-clamp-2">
       {{ product().description }}
-
     </p>
 
-    <hr class="border-secondary my-1" />
+    <div class="mb-5 flex items-center justify-between border-y border-secondary/40 py-3">
+      <!-- Quantity Badge -->
+      <div
+        class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
+        [class.bg-red-100]="isLowStock()"
+        [class.text-red-600]="isLowStock()"
+        [class.bg-secondary]="!isLowStock() && !isOutOfStock()"
+        [class.text-dark]="!isLowStock() && !isOutOfStock()"
+        [class.bg-gray-100]="isOutOfStock()"
+        [class.text-gray-400]="isOutOfStock()"
+      >
+        <span class="h-1.5 w-1.5 rounded-full"
+              [class.bg-red-500]="isLowStock()"
+              [class.bg-green-500]="!isLowStock() && !isOutOfStock()"
+              [class.bg-gray-400]="isOutOfStock()">
+        </span>
+        @if (isOutOfStock()) {
+          Sold Out
+        } @else {
+          Qty: {{ product().quantity }}
+          @if (isLowStock()) {
+            <span class="ml-1 text-[10px] uppercase">(Low)</span>
+          }
+        }
+      </div>
 
-    <!-- Metadata Footer -->
-    <div class="flex flex-row flex-wrap items-center gap-2 text-xs font-medium">
-      <!-- Quantity -->
-      <span class="bg-secondary text-dark px-2.5 py-0.5 rounded-full">
-        Qty: {{ product().quantity }}
-      </span>
-
-      <!-- Owner -->
-      <div class="flex items-center text-accent ml-auto">
-        <span class="mr-1">Owner:</span>
-        <span class="text-dark font-bold truncate max-w-[100px]">
+      <!-- Owner Info -->
+      <div class="flex items-center gap-2">
+        @if (product().user.avatar) {
+          <div class="h-6 w-6 overflow-hidden rounded-full border border-secondary/60">
+            <img [src]="product().user.avatar" [alt]="product().user.name" class="h-full w-full object-cover">
+          </div>
+        }
+        <span class="text-xs font-semibold text-dark truncate max-w-[80px]">
           {{ product().user.name }}
         </span>
       </div>
     </div>
 
     <!-- Action Button -->
-    <button class="mt-2 w-full bg-dark text-primary py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+    <button
+      [disabled]="isOutOfStock()"
+      class="w-full rounded-xl bg-dark py-3.5 text-sm font-bold text-primary transition-all hover:bg-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-secondary disabled:text-accent/50"
+    >
       View Details
     </button>
   </div>

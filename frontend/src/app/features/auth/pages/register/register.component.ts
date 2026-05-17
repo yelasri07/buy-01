@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthStateService } from '../../../../core/services/auth-state.service';
 import { StorageService } from '../../../../core/services/storage.service';
@@ -12,7 +12,7 @@ import { StorageService } from '../../../../core/services/storage.service';
 })
 export class RegisterComponent {
   private authStateService = inject(AuthStateService);
-  private storageService = inject(StorageService)
+  private router = inject(Router);
 
   registerForm = new FormGroup({
     name: new FormControl(""),
@@ -30,8 +30,8 @@ export class RegisterComponent {
     if (this.registerForm.invalid) return;
 
     this.authStateService.register(this.registerForm.value).subscribe({
-      next: res => {
-        this.storageService.setToken(res.token)
+      next: () => {
+        this.router.navigate(['/']);
       },
       error: err => {
         let fieldErrors = err.error?.validationErrors

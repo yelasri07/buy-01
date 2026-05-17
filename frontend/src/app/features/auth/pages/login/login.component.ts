@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { AuthStateService } from '../../../../core/services/auth-state.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { StorageService } from '../../../../core/services/storage.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { StorageService } from '../../../../core/services/storage.service';
 })
 export class LoginComponent {
   private authStateService = inject(AuthStateService);
-  private storage = inject(StorageService)
+  private router = inject(Router);
 
   loginForm = new FormGroup({
     email: new FormControl(""),
@@ -26,12 +26,8 @@ export class LoginComponent {
     if (this.loginForm.invalid) return;
 
     this.authStateService.login(this.loginForm.value).subscribe({
-      next: res => {
-        console.log(res)
-        let token = res.token;
-        this.storage.setToken(token)
-
-
+      next: () => {
+        this.router.navigate(['/']);
       },
       error: err => {
         console.error(err)
