@@ -12,7 +12,7 @@ public class ProductMapper {
         return ProductOutput.builder()
                 .id(product.getId())
                 .name(product.getName())
-                .discription(product.getDescription())
+                .description(product.getDescription())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .userId(product.getUserId())

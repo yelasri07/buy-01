@@ -35,7 +35,7 @@ public class ProductDTO {
     public static record ProductOutput(
             String id,
             String name,
-            String discription,
+            String description,
             Double price,
             Integer quantity,
             @JsonProperty("user_id") String userId,

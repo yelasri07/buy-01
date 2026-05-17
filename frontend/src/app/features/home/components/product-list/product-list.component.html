@@ -1,6 +1,15 @@
-<!-- <p>product-list works!</p> -->
 <div class="flex flex-wrap gap-6 justify-center py-2">
-  @for (item of posts; track item) {
-    <app-product-card />
+  @if (loading()) {
+    <div class="flex justify-center items-center w-full min-h-[300px]">
+      <p class="text-accent">Loading products...</p>
+    </div>
+  } @else {
+    @for (item of products(); track item.id) {
+      <app-product-card [product]="item"/>
+    } @empty {
+      <div class="flex justify-center items-center w-full min-h-[300px]">
+        <p class="text-accent text-xl">No products found.</p>
+      </div>
+    }
   }
 </div>

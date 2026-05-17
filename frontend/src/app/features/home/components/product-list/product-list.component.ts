@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
-import { ProductCardComponent } from "../product-card/product-card.component";
+import { Component, inject } from '@angular/core';
+import { ProductCardComponent } from '../product-card/product-card.component';
+import { ProductService } from '../../../../core/services/product.service';
 
 @Component({
   selector: 'app-product-list',
   imports: [ProductCardComponent],
   templateUrl: './product-list.component.html',
-  styleUrl: './product-list.component.scss'
+  styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent {
-   readonly posts = [1,2,3,4,5,6]
-
+  productService = inject(ProductService);
+  products = this.productService.products;
+  loading = this.productService.loading;
 }

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ProductService } from '../../../../core/services/product.service';
 
 @Component({
   selector: 'app-paginator',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './paginator.component.scss'
 })
 export class PaginatorComponent {
-
+  productService = inject(ProductService);
 }
