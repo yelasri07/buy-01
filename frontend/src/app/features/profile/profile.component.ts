@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthStateService } from '../../core/services/auth-state.service';
+import { User } from '../../core/interfaces/user.interface';
 
 @Component({
   selector: 'app-profile',
@@ -11,6 +12,8 @@ import { AuthStateService } from '../../core/services/auth-state.service';
 export class ProfileComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute)
   private authStateService = inject(AuthStateService)
+
+  userProfile = signal<User | null>(null);
 
   profileError = signal("");
 
@@ -25,7 +28,8 @@ export class ProfileComponent implements OnInit {
 
       this.authStateService.fetchUser(userId).subscribe({
         next: res => {
-          console.log(res)
+          this.userProfile.set(res)
+          console.log(this.userProfile())
         },
 
         error: err => {
