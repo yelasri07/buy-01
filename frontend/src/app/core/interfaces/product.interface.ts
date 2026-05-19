@@ -6,6 +6,6 @@ export interface Product {
     price: number,
     description: string,
     quantity: number,
-    user: User,
+    user_infos: User,
     files?: string[]
 }
