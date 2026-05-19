@@ -33,11 +33,13 @@ export class ProductService {
 
     this.http.get<Product[]>(API.GET_POSTS, { params }).subscribe({
       next: (products) => {
+        console.log(products)
         this._products.set(products);
         this._loading.set(false);
       },
-      error: () => {
+      error: (err) => {
         this._loading.set(false);
+        throw err
       }
     });
   }
