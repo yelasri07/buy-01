@@ -31,6 +31,7 @@ export class LoginComponent {
       },
       error: err => {
         console.error(err)
+        throw err
       }
     })
   }
