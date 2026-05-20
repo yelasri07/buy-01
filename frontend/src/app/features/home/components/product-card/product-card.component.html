@@ -1,7 +1,10 @@
-<div class="group relative max-w-sm overflow-hidden rounded-2xl border border-secondary bg-primary shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-
+<div
+  class="group relative max-w-sm overflow-hidden rounded-2xl border border-secondary bg-primary shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+>
   <!-- Floating Price Tag -->
-  <div class="absolute right-4 top-4 z-10 rounded-full bg-dark/80 px-3 py-1.5 text-sm font-bold text-primary backdrop-blur-md shadow-lg transition-transform group-hover:scale-110">
+  <div
+    class="absolute right-4 top-4 z-10 rounded-full bg-dark/80 px-3 py-1.5 text-sm font-bold text-primary backdrop-blur-md shadow-lg transition-transform group-hover:scale-110"
+  >
     {{ product().price | currency }}
   </div>
 
@@ -11,11 +14,15 @@
       [src]="productImage()"
       [alt]="product().name"
       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-    >
+    />
 
     @if (isOutOfStock()) {
-      <div class="absolute inset-0 flex items-center justify-center bg-dark/40 backdrop-blur-[2px]">
-        <span class="rounded-lg bg-red-500 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white shadow-xl">
+      <div
+        class="absolute inset-0 flex items-center justify-center bg-dark/40 backdrop-blur-[2px]"
+      >
+        <span
+          class="rounded-lg bg-red-500 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white shadow-xl"
+        >
           Out of Stock
         </span>
       </div>
@@ -35,7 +42,9 @@
       {{ product().description }}
     </p>
 
-    <div class="mb-5 flex items-center justify-between border-y border-secondary/40 py-3">
+    <div
+      class="mb-5 flex items-center justify-between border-y border-secondary/40 py-3"
+    >
       <!-- Quantity Badge -->
       <div
         class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
@@ -46,10 +55,12 @@
         [class.bg-gray-100]="isOutOfStock()"
         [class.text-gray-400]="isOutOfStock()"
       >
-        <span class="h-1.5 w-1.5 rounded-full"
-              [class.bg-red-500]="isLowStock()"
-              [class.bg-green-500]="!isLowStock() && !isOutOfStock()"
-              [class.bg-gray-400]="isOutOfStock()">
+        <span
+          class="h-1.5 w-1.5 rounded-full"
+          [class.bg-red-500]="isLowStock()"
+          [class.bg-green-500]="!isLowStock() && !isOutOfStock()"
+          [class.bg-gray-400]="isOutOfStock()"
+        >
         </span>
         @if (isOutOfStock()) {
           Sold Out
@@ -63,6 +74,21 @@
 
       <!-- Owner Info -->
       <div class="flex items-center gap-2">
+        <div
+          class="h-6 w-6 overflow-hidden rounded-full border border-secondary/60"
+        >
+          <img
+            [src]="
+              product().user_infos.avatar ||
+              'https://ui-avatars.com/api/?name=' +
+                product().user_infos.name +
+                '&background=random'
+            "
+            [alt]="product().user_infos.name"
+            class="h-full w-full object-cover"
+          />
+        </div>
+
         <span class="text-xs font-semibold text-dark truncate max-w-20">
           {{ product().user_infos.name }}
         </span>
@@ -71,10 +97,78 @@
 
     <!-- Action Button -->
     <button
+      command="show-modal"
+      commandfor="drawer"
       [disabled]="isOutOfStock()"
       class="w-full rounded-xl bg-dark py-3.5 text-sm font-bold text-primary transition-all hover:bg-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-secondary disabled:text-accent/50"
     >
       View Details
     </button>
+    <el-dialog>
+      <dialog
+        id="drawer"
+        aria-labelledby="drawer-title"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent not-open:hidden backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="absolute inset-0 bg-gray-900/50 transition-opacity duration-500 ease-in-out data-closed:opacity-0"
+        ></el-dialog-backdrop>
+
+        <div
+          tabindex="0"
+          class="absolute inset-0 pl-10 focus:outline-none sm:pl-16"
+        >
+          <el-dialog-panel
+            class="group/dialog-panel relative ml-auto block size-full max-w-md transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700"
+          >
+            <!-- Close button, show/hide based on slide-over state. -->
+            <div
+              class="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 duration-500 ease-in-out group-data-closed/dialog-panel:opacity-0 sm:-ml-10 sm:pr-4"
+            >
+              <button
+                type="button"
+                command="close"
+                commandfor="drawer"
+                class="relative rounded-md text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+              >
+                <span class="absolute -inset-2.5"></span>
+                <span class="sr-only">Close panel</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  data-slot="icon"
+                  aria-hidden="true"
+                  class="size-6"
+                >
+                  <path
+                    d="M6 18 18 6M6 6l12 12"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div
+              class="relative flex h-full flex-col overflow-y-auto bg-dark py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10"
+            >
+              <div class="px-4 sm:px-6">
+                <h2
+                  id="drawer-title"
+                  class="text-base font-semibold text-white"
+                >
+                  Panel title
+                </h2>
+              </div>
+              <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                <!-- Your content -->
+              </div>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
   </div>
 </div>
