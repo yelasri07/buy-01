@@ -21,8 +21,6 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // 6a0eeae05db2380921053ea1
-
     this.activatedRoute.paramMap.subscribe(params => {
       this.userProfile.set(null)
       const userId = params.get('id')

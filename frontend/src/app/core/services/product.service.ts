@@ -31,7 +31,6 @@ export class ProductService {
       next: (products) => {
         this._products.set(products);
         this._loading.set(false);
-        console.log(products)
       },
       error: (err) => {
         this._loading.set(false);
