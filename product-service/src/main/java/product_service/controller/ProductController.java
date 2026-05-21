@@ -39,8 +39,16 @@ public class ProductController {
     public List<ProductOutput> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
-        return this.productService.getProducts(page, size);
+
+        return this.productService.getProducts(page, size, null);
+    }
+
+    @GetMapping("/users/{id}")
+    public List<ProductOutput> getProfileProducts(@PathVariable("id") String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return this.productService.getProducts(page, size, userId);
     }
 
     @GetMapping("/{id}")

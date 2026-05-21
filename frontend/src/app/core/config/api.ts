@@ -3,5 +3,6 @@ export const API = {
     REGISTER: `${URL}/auth/register`,
     LOGIN: `${URL}/auth/login`,
     GET_POSTS: `${URL}/api/products`,
-    PROFILE: `${URL}/users`
+    PROFILE: `${URL}/users`,
+    GET_PROFILE_POSTS: `${URL}/api/products/users`
 }

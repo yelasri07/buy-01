@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ProductService } from '../../../../core/services/product.service';
 
 @Component({
@@ -9,4 +9,6 @@ import { ProductService } from '../../../../core/services/product.service';
 })
 export class PaginatorComponent {
   productService = inject(ProductService);
+
+  userId = input<string | undefined>(undefined);
 }

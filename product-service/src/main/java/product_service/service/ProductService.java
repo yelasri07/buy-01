@@ -46,13 +46,14 @@ public class ProductService {
         return ProductMapper.toProductOutputDto(createdProduct, null, null);
     }
 
-    public List<ProductOutput> getProducts(int page, int size) {
+    public List<ProductOutput> getProducts(int page, int size, String userId) {
         if (size > 100) {
             throw new BadRequestException("Max size is: 100");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
-        List<Product> entities = this.productRepository.findAll(pageable).getContent();
+        List<Product> entities = userId == null ? this.productRepository.findAll(pageable).getContent()
+                : this.productRepository.findByUserId(userId, pageable).getContent();
 
         // send one request to get users for each product
         Set<String> userIds = entities.stream().map(product -> product.getUserId()).collect(Collectors.toSet());

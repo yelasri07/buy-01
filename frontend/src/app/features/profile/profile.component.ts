@@ -2,10 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthStateService } from '../../core/services/auth-state.service';
 import { User } from '../../core/interfaces/user.interface';
+import { ProductService } from '../../core/services/product.service';
+import { ProductListComponent } from "../home/components/product-list/product-list.component";
+import { PaginatorComponent } from "../home/components/paginator/paginator.component";
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  imports: [ProductListComponent, PaginatorComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -18,7 +21,10 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
 
+    // 6a0eeae05db2380921053ea1
+
     this.activatedRoute.paramMap.subscribe(params => {
+      this.userProfile.set(null)
       const userId = params.get('id')
       if (!userId) {
         this.profileError.set("Whoops! profile not found.")
@@ -29,7 +35,6 @@ export class ProfileComponent implements OnInit {
         next: res => {
           this.profileError.set("")
           this.userProfile.set(res.user_details)
-          console.log(this.userProfile())
         },
 
         error: err => {
