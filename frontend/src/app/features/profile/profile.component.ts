@@ -5,10 +5,11 @@ import { User } from '../../core/interfaces/user.interface';
 import { ProductService } from '../../core/services/product.service';
 import { ProductListComponent } from "../home/components/product-list/product-list.component";
 import { PaginatorComponent } from "../home/components/paginator/paginator.component";
+import { CreateProductComponent } from "../../shared/components/create-product/create-product.component";
 
 @Component({
   selector: 'app-profile',
-  imports: [ProductListComponent, PaginatorComponent],
+  imports: [ProductListComponent, PaginatorComponent, CreateProductComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
