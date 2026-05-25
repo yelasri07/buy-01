@@ -4,5 +4,7 @@ export const API = {
     LOGIN: `${URL}/auth/login`,
     GET_POSTS: `${URL}/api/products`,
     PROFILE: `${URL}/users`,
-    GET_PROFILE_POSTS: `${URL}/api/products/users`
+    GET_PROFILE_POSTS: `${URL}/api/products/users`,
+    CREATE_PRODUCT: `${URL}/api/products`,
+    CREATE_MEDIA: `${URL}/media`
 }

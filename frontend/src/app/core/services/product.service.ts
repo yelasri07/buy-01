@@ -46,6 +46,10 @@ export class ProductService {
     }
   }
 
+  submitProduct(data: any) {
+    return this.http.post<Product>(API.CREATE_PRODUCT, data)
+  }
+
   previousPage(userId?: string) {
     if (!this.isFirstPage()) {
       this._page.update(p => Math.max(0, p - 1));

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import media_service.exception.BadRequestException;
+import media_service.kafka.MediaProducerService;
 import media_service.model.Media;
 import media_service.model.Target;
 import media_service.model.dto.MediaDTO.MediaInput;
@@ -29,70 +30,78 @@ public class MediaService {
     private final ProductClient productClient;
     private final UserClient userClient;
     private final CloudinaryService cloudinaryService;
+    private final MediaProducerService mediaProducerService;
 
     private final String product_dir = "products";
     private final String user_dir = "avatars";
 
     public Map<String, Object> uploadMedia(MediaInput mediaInput, String userId) {
-        if (mediaInput.files() == null || mediaInput.files().length == 0) {
-            throw new BadRequestException("No files uploaded");
-        }
 
-        for (MultipartFile file : mediaInput.files()) {
-            FileValidator.validateImage(file);
-        }
-
-        if (mediaInput.target() == Target.USER && mediaInput.files().length > 1) {
-            throw new BadRequestException("Users accept only one media");
-        } else if ((mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT))
-                && mediaInput.files().length > 5) {
-            throw new BadRequestException("Products accept maximum 5 media");
-        }
-
-        if (mediaInput.target() == Target.USER && !mediaInput.targetId().equals(userId)) {
-            throw new AccessDeniedException("Cannot update other users avatar");
-        }
-
-        if (mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT)) {
-            ProductInput product = productClient.getProduct(mediaInput.targetId());
-            if (!product.user_id().equals(userId)) {
-                throw new AccessDeniedException("Cannot update other users products");
+        try {
+            if (mediaInput.files() == null || mediaInput.files().length == 0) {
+                throw new BadRequestException("No files uploaded");
             }
 
-            if (mediaInput.target().equals(Target.PRODUCT)) {
-                var mediaSize = this.mediaRepository.findByProductId(product.id()).size();
-                if (mediaSize > 0) {
-                    throw new BadRequestException("Cannot add another media product");
+            for (MultipartFile file : mediaInput.files()) {
+                FileValidator.validateImage(file);
+            }
+
+            if (mediaInput.target() == Target.USER && mediaInput.files().length > 1) {
+                throw new BadRequestException("Users accept only one media");
+            } else if ((mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT))
+                    && mediaInput.files().length > 5) {
+                throw new BadRequestException("Products accept maximum 5 media");
+            }
+
+            if (mediaInput.target() == Target.USER && !mediaInput.targetId().equals(userId)) {
+                throw new AccessDeniedException("Cannot update other users avatar");
+            }
+
+            if (mediaInput.target().equals(Target.PRODUCT) || mediaInput.target().equals(Target.UPDATE_PRODUCT)) {
+                ProductInput product = productClient.getProduct(mediaInput.targetId());
+                if (!product.user_id().equals(userId)) {
+                    throw new AccessDeniedException("Cannot update other users products");
                 }
-            } else {
-                // remove old images
+
+                if (mediaInput.target().equals(Target.PRODUCT)) {
+                    var mediaSize = this.mediaRepository.findByProductId(product.id()).size();
+                    if (mediaSize > 0) {
+                        throw new BadRequestException("Cannot add another media product");
+                    }
+                } else {
+                    // remove old images
+                }
             }
+
+            String subDir = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
+            Map<String, Object> response = new HashMap<>();
+            List<String> message = new ArrayList<>();
+            for (MultipartFile file : mediaInput.files()) {
+
+                // String filePath = this.saveFile(mediaInput, location, file, subDir);
+                String filePath = this.cloudinaryService.uploadFile(file, subDir);
+
+                if (mediaInput.target() == Target.USER) {
+                    userClient.updateAvatar(filePath);
+                }
+                if (mediaInput.target() == Target.PRODUCT) {
+                    Media media = Media.builder()
+                            .productId(mediaInput.targetId())
+                            .imagePath(filePath)
+                            .build();
+                    mediaRepository.save(media);
+                }
+
+                message.add(filePath);
+            }
+
+            response.put("files", message);
+            return response;
+        } catch (Exception e) {
+            if (mediaInput.target().equals(Target.PRODUCT))
+                this.mediaProducerService.sendMessage("delete-product", mediaInput.targetId());
+            throw e;
         }
-
-        String subDir = mediaInput.target() == Target.PRODUCT ? product_dir : user_dir;
-        Map<String, Object> response = new HashMap<>();
-        List<String> message = new ArrayList<>();
-        for (MultipartFile file : mediaInput.files()) {
-
-            // String filePath = this.saveFile(mediaInput, location, file, subDir);
-            String filePath = this.cloudinaryService.uploadFile(file, subDir);
-
-            if (mediaInput.target() == Target.USER) {
-                userClient.updateAvatar(filePath);
-            }
-            if (mediaInput.target() == Target.PRODUCT) {
-                Media media = Media.builder()
-                        .productId(mediaInput.targetId())
-                        .imagePath(filePath)
-                        .build();
-                mediaRepository.save(media);
-            }
-
-            message.add(filePath);
-        }
-
-        response.put("files", message);
-        return response;
 
     }
 
