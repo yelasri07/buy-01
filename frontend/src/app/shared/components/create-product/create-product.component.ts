@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, OnDestroy, OnInit, Output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MediaService } from '../../../core/services/media.service';
@@ -6,6 +6,8 @@ import { Confirmable } from '../../decorators/confirmable.decorator';
 import { NgClass } from '@angular/common';
 import { PopupService } from '../../../core/services/popup.service';
 import { finalize } from 'rxjs';
+import { Product } from '../../../core/interfaces/product.interface';
+import { AuthStateService } from '../../../core/services/auth-state.service';
 
 @Component({
   selector: 'app-create-product',
@@ -17,6 +19,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   private productService = inject(ProductService)
   private mediaService = inject(MediaService)
   private popupService = inject(PopupService)
+  private currentUser = inject(AuthStateService)
 
   @Output()
   close = new EventEmitter()
@@ -70,9 +73,14 @@ export class CreateProductComponent implements OnInit, OnDestroy {
             this.creatingProduct.set(false)
           })
         ).subscribe({
-          next: () => {
-            this.popupService.showSuccess("Product created successfully.")
+          next: (mediaResponse) => {
             this.close.emit()
+            this.popupService.showSuccess("Product created successfully.")
+            this.productService.productUnshift({
+              ...res,
+              user_infos: this.currentUser.getCurrentUser() || undefined,
+              files: mediaResponse.files
+            })
           }
         })
       },
@@ -112,6 +120,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
     this.media().splice(index, 1)
   }
 
+  @HostListener('click')
   closeModal() {
     let needConfirm = false
     Object.values(this.productForm.value).forEach(value => {

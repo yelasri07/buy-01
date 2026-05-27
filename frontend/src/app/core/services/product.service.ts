@@ -57,7 +57,16 @@ export class ProductService {
     }
   }
 
+  productUnshift(product: Product) {
+    if (!this.isFirstPage()) return;
+    this._products.update(p => [product, ...(p.length === this.pageSize ? p.splice(0, p.length - 1) : p)])
+  }
+
   resetPage() {
     this._page.set(0)
+  }
+
+  resetProducts() {
+    this._products.set([])
   }
 }

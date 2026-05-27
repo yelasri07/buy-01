@@ -20,6 +20,6 @@ export class MediaService {
     formData.append('target', target);
     formData.append('targetId', targetId);
 
-    return this.http.post(API.CREATE_MEDIA, formData);
+    return this.http.post<{ files: string[] }>(API.CREATE_MEDIA, formData);
   }
 }
