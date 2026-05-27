@@ -78,7 +78,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
             this.popupService.showSuccess("Product created successfully.")
             this.productService.productUnshift({
               ...res,
-              user_infos: this.currentUser.getCurrentUser() || undefined,
+              user_infos: this.currentUser.currentUser() || undefined,
               files: mediaResponse.files
             })
           }

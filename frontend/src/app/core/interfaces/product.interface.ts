@@ -6,6 +6,7 @@ export interface Product {
     price: number,
     description: string,
     quantity: number,
+    user_id: string
     user_infos?: User,
     files?: string[]
 }

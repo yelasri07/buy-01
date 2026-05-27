@@ -68,10 +68,6 @@ export class AuthStateService {
     this._currentUser.set(null);
   }
 
-  getCurrentUser() {
-    return this._currentUser()
-  }
-
   fetchUser(id: string) {
     return this.http.get<{ user_details: User }>(`${API.PROFILE}/${id}`)
   }

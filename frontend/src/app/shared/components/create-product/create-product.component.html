@@ -21,7 +21,7 @@
                 }
             </span>
 
-            <textarea formControlName="description" placeholder="Description..."
+            <textarea maxlength="255" formControlName="description" placeholder="Description..."
                 class="w-full resize-none px-4 py-3 rounded-lg border border-secondary bg-primary text-dark placeholder-accent focus:outline-none focus:ring-2 focus:ring-accent transition"></textarea>
             <span class="text-red-500 -my-3">
                 @if (description.hasError('required')) {
