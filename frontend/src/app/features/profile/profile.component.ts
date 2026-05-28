@@ -14,7 +14,7 @@ import { CreateProductComponent } from "../../shared/components/create-product/c
 })
 export class ProfileComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute)
-  private authStateService = inject(AuthStateService)
+  authStateService = inject(AuthStateService)
 
   userProfile = signal<User | null>(null);
   profileError = signal("");

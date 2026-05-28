@@ -6,5 +6,6 @@ export const API = {
     PROFILE: `${URL}/users`,
     GET_PROFILE_POSTS: `${URL}/api/products/users`,
     CREATE_PRODUCT: `${URL}/api/products`,
-    CREATE_MEDIA: `${URL}/media`
+    CREATE_MEDIA: `${URL}/media`,
+    DELETE_PRODUCT: `${URL}/api/products`,
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, inject, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, input, OnDestroy, OnInit, Output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MediaService } from '../../../core/services/media.service';
@@ -8,6 +8,7 @@ import { PopupService } from '../../../core/services/popup.service';
 import { finalize } from 'rxjs';
 import { Product } from '../../../core/interfaces/product.interface';
 import { AuthStateService } from '../../../core/services/auth-state.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-create-product',
@@ -20,6 +21,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   private mediaService = inject(MediaService)
   private popupService = inject(PopupService)
   private currentUser = inject(AuthStateService)
+  private activatedRoute = inject(ActivatedRoute);
 
   @Output()
   close = new EventEmitter()
@@ -76,11 +78,14 @@ export class CreateProductComponent implements OnInit, OnDestroy {
           next: (mediaResponse) => {
             this.close.emit()
             this.popupService.showSuccess("Product created successfully.")
-            this.productService.productUnshift({
-              ...res,
-              user_infos: this.currentUser.currentUser() || undefined,
-              files: mediaResponse.files
-            })
+            const profileId = this.activatedRoute.snapshot.paramMap.get('id');
+            if (profileId === this.currentUser.currentUser()?.id) {
+              this.productService.productUnshift({
+                ...res,
+                user_infos: this.currentUser.currentUser() || undefined,
+                files: mediaResponse.files
+              })
+            }
           }
         })
       },

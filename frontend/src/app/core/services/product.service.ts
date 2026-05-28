@@ -59,7 +59,27 @@ export class ProductService {
 
   productUnshift(product: Product) {
     if (!this.isFirstPage()) return;
+    this._products.set(this._products().filter(p => p.id !== product.id))
     this._products.update(p => [product, ...(p.length === this.pageSize ? p.splice(0, p.length - 1) : p)])
+  }
+
+  productDelete(productId: string) {
+    const deletedProduct: Product = {
+      id: productId,
+      name: "",
+      description: "",
+      price: 0,
+      quantity: 0,
+      user_id: ""
+    }
+
+    this._products.set(this._products().map(p => {
+      if (p.id === productId) {
+        return deletedProduct;
+      }
+
+      return p
+    }))
   }
 
   resetPage() {
@@ -68,5 +88,9 @@ export class ProductService {
 
   resetProducts() {
     this._products.set([])
+  }
+
+  submitDeleteProduct(productId: string) {
+    return this.http.delete<{ productId: string, message: string }>(API.DELETE_PRODUCT + '/' + productId)
   }
 }

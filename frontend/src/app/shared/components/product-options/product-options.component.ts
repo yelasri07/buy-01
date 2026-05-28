@@ -1,4 +1,7 @@
-import { Component, EventEmitter, HostListener, input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, input, Output } from '@angular/core';
+import { ProductService } from '../../../core/services/product.service';
+import { PopupService } from '../../../core/services/popup.service';
+import { Confirmable } from '../../decorators/confirmable.decorator';
 
 @Component({
   selector: 'app-product-options',
@@ -7,6 +10,9 @@ import { Component, EventEmitter, HostListener, input, Output } from '@angular/c
   styleUrl: './product-options.component.scss'
 })
 export class ProductOptionsComponent {
+  private productService = inject(ProductService)
+  private popupService = inject(PopupService)
+
   @Output()
   hide = new EventEmitter()
 
@@ -16,8 +22,12 @@ export class ProductOptionsComponent {
     console.log(this.productId());
   }
 
+  @Confirmable()
   deleteProduct() {
-    console.log(this.productId());
+    this.productService.submitDeleteProduct(this.productId()).subscribe(res => {
+      this.popupService.showSuccess(res.message)
+      this.productService.productDelete(res.productId)
+    })
   }
 
   @HostListener('document:click')
