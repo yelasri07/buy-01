@@ -46,10 +46,6 @@ export class ProductService {
     }
   }
 
-  submitProduct(data: any) {
-    return this.http.post<Product>(API.CREATE_PRODUCT, data)
-  }
-
   previousPage(userId?: string) {
     if (!this.isFirstPage()) {
       this._page.update(p => Math.max(0, p - 1));
@@ -82,12 +78,27 @@ export class ProductService {
     }))
   }
 
+  productUpdate(product: Product) {
+    this._products.set(this._products().map(p => {
+      if (p.id === product.id) {
+        return product;
+      }
+
+      return p
+    }))
+
+  }
+
   resetPage() {
     this._page.set(0)
   }
 
   resetProducts() {
     this._products.set([])
+  }
+
+  submitProduct(product: any, productId?: string) {
+    return !productId ? this.http.post<Product>(API.CREATE_PRODUCT, product) : this.http.put<Product>(API.UPDATE_PRODUCT + '/' + productId, product)
   }
 
   submitDeleteProduct(productId: string) {

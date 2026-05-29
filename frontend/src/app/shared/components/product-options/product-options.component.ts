@@ -1,7 +1,8 @@
-import { Component, EventEmitter, HostListener, inject, input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, input, Output, signal } from '@angular/core';
 import { ProductService } from '../../../core/services/product.service';
 import { PopupService } from '../../../core/services/popup.service';
 import { Confirmable } from '../../decorators/confirmable.decorator';
+import { Product } from '../../../core/interfaces/product.interface';
 
 @Component({
   selector: 'app-product-options',
@@ -16,10 +17,13 @@ export class ProductOptionsComponent {
   @Output()
   hide = new EventEmitter()
 
+  @Output()
+  showUpdateProduct = new EventEmitter();
+
   productId = input.required<string>()
 
   updateProduct() {
-    console.log(this.productId());
+    this.showUpdateProduct.emit()
   }
 
   @Confirmable()

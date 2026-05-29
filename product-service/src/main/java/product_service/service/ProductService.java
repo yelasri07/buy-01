@@ -20,6 +20,7 @@ import product_service.exception.NotFoundException;
 import product_service.kafka.ProductProducerService;
 import product_service.mapper.ProductMapper;
 import product_service.model.Product;
+import product_service.model.ProductStatus;
 import product_service.repository.ProductRepository;
 import product_service.restApi.MediaClient;
 import product_service.restApi.UserClient;
@@ -40,6 +41,7 @@ public class ProductService {
                 .price(productData.price())
                 .quantity(productData.quantity())
                 .userId(userId)
+                .status(ProductStatus.PENDING)
                 .build();
 
         Product createdProduct = this.productRepository.insert(product);

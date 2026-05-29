@@ -12,7 +12,8 @@
     </button>
 
     @if(isVisibleOptions()) {
-    <app-product-options (hide)="isVisibleOptions.set(false)" [productId]="product().id" />
+    <app-product-options (showUpdateProduct)="isVisibleUpdateProduct.set(true)" (hide)="isVisibleOptions.set(false)"
+      [productId]="product().id" />
     }
   </div>
   }
@@ -77,6 +78,10 @@
       </div>
     </div>
 
+    <div>
+      {{ product().status }}
+    </div>
+
     <!-- Action Button -->
     <button [disabled]="isOutOfStock()"
       class="w-full rounded-xl bg-dark py-3.5 text-sm font-bold text-primary transition-all hover:bg-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-secondary disabled:text-accent/50">
@@ -84,3 +89,7 @@
     </button>
   </div>
 </div>
+
+@if (isVisibleUpdateProduct()) {
+<app-create-product (close)="isVisibleUpdateProduct.set(false)" [product]="product()" />
+}

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, inject, input, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, inject, input, OnDestroy, OnInit, Output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MediaService } from '../../../core/services/media.service';
@@ -6,9 +6,9 @@ import { Confirmable } from '../../decorators/confirmable.decorator';
 import { NgClass } from '@angular/common';
 import { PopupService } from '../../../core/services/popup.service';
 import { finalize } from 'rxjs';
-import { Product } from '../../../core/interfaces/product.interface';
 import { AuthStateService } from '../../../core/services/auth-state.service';
 import { ActivatedRoute } from '@angular/router';
+import { Product } from '../../../core/interfaces/product.interface';
 
 @Component({
   selector: 'app-create-product',
@@ -30,6 +30,8 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   mediaError = signal<string>('')
   creatingProduct = signal<boolean>(false)
 
+  product = input<Product | null>()
+
   productForm = new FormGroup({
     name: new FormControl(''),
     description: new FormControl(''),
@@ -39,6 +41,12 @@ export class CreateProductComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     document.body.classList.add('overflow-hidden');
+    if (!this.product()) return;
+
+    this.name.setValue(this.product()?.name || '')
+    this.description.setValue(this.product()?.description || '')
+    this.price.setValue(this.product()?.price || '')
+    this.quantity.setValue(this.product()?.quantity.toString() || '')
   }
 
   ngOnDestroy(): void {
@@ -61,31 +69,30 @@ export class CreateProductComponent implements OnInit, OnDestroy {
       this.price.setValue(parseFloat(this.price.value).toFixed(2))
     }
 
-    if (this.media().length === 0) {
+    if (this.media().length === 0 && !this.product()) {
       this.mediaError.set("Product images must be between 1 and 5 image")
       return
     };
 
     this.creatingProduct.set(true)
-    this.productService.submitProduct(this.productForm.value).subscribe({
+    this.productService.submitProduct(this.productForm.value, this.product()?.id).subscribe({
       next: res => {
         const files: File[] = this.media().map(m => m.file)
-        this.mediaService.submitMedia(files, 'PRODUCT', res.id).pipe(
+        if (files.length === 0) {
+          this.showProduct(res, this.product()?.files || [])
+          return
+        };
+        this.mediaService.submitMedia(files, (this.product()?.id ? 'UPDATE_PRODUCT' : 'PRODUCT'), res.id).pipe(
           finalize(() => {
             this.creatingProduct.set(false)
           })
         ).subscribe({
           next: (mediaResponse) => {
-            this.close.emit()
-            this.popupService.showSuccess("Product created successfully.")
-            const profileId = this.activatedRoute.snapshot.paramMap.get('id');
-            if (profileId === this.currentUser.currentUser()?.id) {
-              this.productService.productUnshift({
-                ...res,
-                user_infos: this.currentUser.currentUser() || undefined,
-                files: mediaResponse.files
-              })
-            }
+            this.showProduct(res, mediaResponse.files)
+          },
+          error: e => {
+            this.showProduct(res, this.product()?.files || [], true)
+            throw e
           }
         })
       },
@@ -149,6 +156,32 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   @Confirmable()
   private closeModalWithConfirmation() {
     this.close.emit()
+  }
+
+  private showProduct(product: Product, media: string[], mediaError: boolean = false) {
+    if (media.length > 0 && !mediaError) {
+      this.close.emit()
+      let successMessage = this.product() ? 'Product updated successfully.' : "Product created successfully."
+      this.popupService.showSuccess(successMessage)
+      product.status = 'ACTIVE'
+    };
+
+    const profileId = this.activatedRoute.snapshot.paramMap.get('id');
+    if (profileId === this.currentUser.currentUser()?.id) {
+      if (this.product()) {
+        this.productService.productUpdate({
+          ...product,
+          user_infos: this.currentUser.currentUser() || undefined,
+          files: media
+        })
+      } else {
+        this.productService.productUnshift({
+          ...product,
+          user_infos: this.currentUser.currentUser() || undefined,
+          files: media
+        })
+      }
+    }
   }
 
   get name() {

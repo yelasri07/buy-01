@@ -8,4 +8,5 @@ export const API = {
     CREATE_PRODUCT: `${URL}/api/products`,
     CREATE_MEDIA: `${URL}/media`,
     DELETE_PRODUCT: `${URL}/api/products`,
+    UPDATE_PRODUCT: `${URL}/api/products`
 }

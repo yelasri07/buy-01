@@ -15,6 +15,7 @@ public class ProductMapper {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
+                .status(product.getStatus())
                 .userId(product.getUserId())
                 .userInfos(user)
                 .files(files)

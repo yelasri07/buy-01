@@ -3,10 +3,11 @@ import { Product } from '../../../../core/interfaces/product.interface';
 import { CurrencyPipe } from '@angular/common';
 import { ProductOptionsComponent } from "../../../../shared/components/product-options/product-options.component";
 import { AuthStateService } from '../../../../core/services/auth-state.service';
+import { CreateProductComponent } from "../../../../shared/components/create-product/create-product.component";
 
 @Component({
   selector: 'app-product-card',
-  imports: [CurrencyPipe, ProductOptionsComponent],
+  imports: [CurrencyPipe, ProductOptionsComponent, CreateProductComponent],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss'
 })
@@ -15,6 +16,7 @@ export class ProductCardComponent {
   currentUser = inject(AuthStateService)
 
   isVisibleOptions = signal<boolean>(false);
+  isVisibleUpdateProduct = signal<boolean>(false);
 
   productImage = computed(() => {
     const files = this.product().files;

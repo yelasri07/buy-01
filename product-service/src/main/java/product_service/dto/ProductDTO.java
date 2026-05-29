@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import product_service.model.ProductStatus;
 
 public class ProductDTO {
 
@@ -38,6 +39,7 @@ public class ProductDTO {
             String description,
             Double price,
             Integer quantity,
+            ProductStatus status,
             @JsonProperty("user_id") String userId,
             @JsonProperty("user_infos")
             UserDTO userInfos,

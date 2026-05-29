@@ -18,6 +18,7 @@ public class Product {
     private String description;
     private Double price;
     private Integer quantity;
+    private ProductStatus status;
     @Field("user_id")
     private String userId;
 
