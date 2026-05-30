@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, inject, input, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, inject, input, model, OnDestroy, OnInit, Output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MediaService } from '../../../core/services/media.service';
@@ -30,7 +30,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   mediaError = signal<string>('')
   creatingProduct = signal<boolean>(false)
 
-  product = input<Product | null>()
+  product = model<Product | null>()
 
   productForm = new FormGroup({
     name: new FormControl(''),
@@ -92,6 +92,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
           },
           error: e => {
             this.showProduct(res, this.product()?.files || [], true)
+            this.product.set(res)
             throw e
           }
         })
@@ -159,11 +160,11 @@ export class CreateProductComponent implements OnInit, OnDestroy {
   }
 
   private showProduct(product: Product, media: string[], mediaError: boolean = false) {
-    if (media.length > 0 && !mediaError) {
+    if (media.length >= 0 && !mediaError) {
       this.close.emit()
       let successMessage = this.product() ? 'Product updated successfully.' : "Product created successfully."
       this.popupService.showSuccess(successMessage)
-      product.status = 'ACTIVE'
+      if (media.length > 0) product.status = 'ACTIVE'
     };
 
     const profileId = this.activatedRoute.snapshot.paramMap.get('id');
