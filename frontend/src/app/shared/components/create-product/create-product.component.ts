@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, inject, input, model, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, input, model, OnDestroy, OnInit, Output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ProductService } from '../../../core/services/product.service';
 import { MediaService } from '../../../core/services/media.service';
@@ -93,6 +93,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
           error: e => {
             this.showProduct(res, this.product()?.files || [], true)
             this.product.set(res)
+            this.productForm.setErrors({ 'error': e.error.message })
             throw e
           }
         })
@@ -112,6 +113,7 @@ export class CreateProductComponent implements OnInit, OnDestroy {
 
   onMediaChange(event: Event) {
     this.mediaError.set('')
+    this.productForm.setErrors(null)
     const ipt = event.target as HTMLInputElement
 
     if (this.media().length === 5) {
@@ -124,11 +126,19 @@ export class CreateProductComponent implements OnInit, OnDestroy {
     const file = ipt.files[0]
     ipt.value = ''
 
+    const MAX_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      ipt.value = ''
+      this.popupService.showError("Image size must not exceed 2MB.")
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(file)
     this.media().push({ url: objectUrl, file: file })
   }
 
   removeMedia(index: number) {
+    this.productForm.setErrors(null)
     URL.revokeObjectURL(this.media()[index].url)
     this.media().splice(index, 1)
   }

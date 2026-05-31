@@ -54,7 +54,8 @@ public class ProductService {
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
-        List<Product> entities = userId == null ? this.productRepository.findAll(pageable).getContent()
+        List<Product> entities = userId == null
+                ? this.productRepository.findByStatus(ProductStatus.ACTIVE, pageable).getContent()
                 : this.productRepository.findByUserId(userId, pageable).getContent();
 
         // send one request to get users for each product
