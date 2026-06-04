@@ -98,15 +98,14 @@
     <!-- Action Button -->
     <button
       command="show-modal"
-      commandfor="drawer"
-      [disabled]="isOutOfStock()"
+      [attr.commandfor]="'drawer-' + product().id"
       class="w-full rounded-xl bg-dark py-3.5 text-sm font-bold text-primary transition-all hover:bg-accent active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-secondary disabled:text-accent/50"
     >
       View Details
     </button>
     <el-dialog>
       <dialog
-        id="drawer"
+        [id]="'drawer-' + product().id"
         aria-labelledby="drawer-title"
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent not-open:hidden backdrop:bg-transparent"
       >
@@ -128,7 +127,7 @@
               <button
                 type="button"
                 command="close"
-                commandfor="drawer"
+                [attr.commandfor]="'drawer-' + product().id"
                 class="relative rounded-md text-gray-400 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 <span class="absolute -inset-2.5"></span>
@@ -155,15 +154,85 @@
               class="relative flex h-full flex-col overflow-y-auto bg-dark py-6 shadow-xl after:absolute after:inset-y-0 after:left-0 after:w-px after:bg-white/10"
             >
               <div class="px-4 sm:px-6">
-                <h2
-                  id="drawer-title"
-                  class="text-base font-semibold text-white"
-                >
-                  Panel title
+                <h2 id="drawer-title" class="text-2xl font-bold text-white">
+                  {{ product().name }}
                 </h2>
               </div>
-              <div class="relative mt-6 flex-1 px-4 sm:px-6">
-                <!-- Your content -->
+              <div class="relative mt-6 flex-1 px-4 sm:px-6 flex flex-col gap-8">
+                <!-- Image Gallery -->
+                <div class="flex flex-col gap-4">
+                  <div class="aspect-square w-full overflow-hidden rounded-3xl bg-white/5 border border-white/10 shadow-2xl">
+                    <img [src]="currentDrawerImage()" [alt]="product().name" class="h-full w-full object-cover transition-all duration-300">
+                  </div>
+                  
+                  @if (drawerImages().length > 1) {
+                    <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                      @for (img of drawerImages(); track img; let i = $index) {
+                        <button 
+                          (click)="selectImage(i)"
+                          class="relative h-16 w-16 min-w-16 overflow-hidden rounded-xl border-2 transition-all cursor-pointer"
+                          [class.border-accent]="selectedImageIndex() === i"
+                          [class.border-transparent]="selectedImageIndex() !== i"
+                          [class.opacity-50]="selectedImageIndex() !== i"
+                        >
+                          <img [src]="img" class="h-full w-full object-cover">
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- Price & Stock Status -->
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest text-white/40 block mb-1">Price</span>
+                    <span class="text-3xl font-bold text-white">{{ product().price | currency }}</span>
+                  </div>
+                  
+                  <div
+                    class="flex items-center gap-2 rounded-2xl px-4 py-2 text-xs font-bold border"
+                    [class.bg-white-5]="!isLowStock() && !isOutOfStock()"
+                    [class.border-white-10]="!isLowStock() && !isOutOfStock()"
+                    [class.text-white-70]="!isLowStock() && !isOutOfStock()"
+                  >
+                    <span class="h-2 w-2 rounded-full animate-pulse" 
+                          [class.bg-red-500]="isLowStock()" 
+                          [class.bg-green-500]="!isLowStock() && !isOutOfStock()"
+                          [class.bg-white-20]="isOutOfStock()">
+                    </span>
+                    @if (isOutOfStock()) {
+                      Sold Out
+                    } @else {
+                      {{ product().quantity }} Units Available
+                    }
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                  <h3 class="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">Description</h3>
+                  <p class="text-lg leading-relaxed text-white/80 font-light">
+                    {{ product().description }}
+                  </p>
+                </div>
+
+                <!-- Seller Info Card -->
+                <div class="mt-auto pt-8 border-t border-white/10">
+                  <h3 class="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">Verified Seller</h3>
+                  <div class="flex items-center gap-4 p-5 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm transition-colors hover:bg-white/[0.08]">
+                    <div class="h-14 w-14 overflow-hidden rounded-2xl border border-white/10 shadow-inner">
+                      <img 
+                        [src]="product().user_infos.avatar || 'https://ui-avatars.com/api/?name=' + product().user_infos.name + '&background=random'" 
+                        [alt]="product().user_infos.name" 
+                        class="h-full w-full object-cover"
+                      >
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-base font-bold text-white">{{ product().user_infos.name }}</p>
+                      <p class="text-sm text-white/40">{{ product().user_infos.email }}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </el-dialog-panel>
