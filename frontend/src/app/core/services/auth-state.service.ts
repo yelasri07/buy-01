@@ -52,7 +52,7 @@ export class AuthStateService {
         this.storage.setToken(res.token);
         this.setCurrentUser(res.token);
       })
-    ) 
+    )
   }
 
   login(userData: any) {
