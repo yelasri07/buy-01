@@ -1,4 +1,4 @@
-enum userRole {
+export enum userRole {
     CLIENT,
     SELLER
 }

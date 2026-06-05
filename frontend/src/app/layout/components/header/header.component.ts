@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthStateService } from '../../../core/services/auth-state.service';
 
 @Component({
@@ -9,11 +9,13 @@ import { AuthStateService } from '../../../core/services/auth-state.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  private router = inject(Router)
   authStateService = inject(AuthStateService);
   user = this.authStateService.currentUser;
   isAuthenticated = this.authStateService.isAuthenticated;
 
   logout() {
     this.authStateService.logout();
+    this.router.navigateByUrl('/auth/login')
   }
 }

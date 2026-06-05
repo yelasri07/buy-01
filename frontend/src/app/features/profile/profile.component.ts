@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthStateService } from '../../core/services/auth-state.service';
-import { User } from '../../core/interfaces/user.interface';
+import { User, userRole } from '../../core/interfaces/user.interface';
 import { ProductListComponent } from "../home/components/product-list/product-list.component";
 import { PaginatorComponent } from "../home/components/paginator/paginator.component";
 import { CreateProductComponent } from "../../shared/components/create-product/create-product.component";
@@ -38,6 +38,11 @@ export class ProfileComponent implements OnInit {
 
       this.authStateService.fetchUserProfile(userId).subscribe({
         next: res => {
+          if (res.user_details.role.toString() == userRole[userRole.CLIENT]) {
+            this.profileError.set("Whoops! profile not found.")
+            return;
+          }
+
           this.profileError.set("")
           this.userProfile.set(res.user_details)
         },

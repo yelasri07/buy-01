@@ -1,5 +1,5 @@
 import { ApplicationConfig, ErrorHandler, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -18,7 +18,11 @@ export const appConfig: ApplicationConfig = {
   provideAppInitializer(() => {
     inject(DialogService)
     const authStateService = inject(AuthStateService)
-    authStateService.fetchCurrentUser().subscribe()
+
+    const excludedPaths = ['/auth', '/auth/login', '/auth/register', '/feed', '/'];
+    if (!excludedPaths.includes(location.pathname)) {
+      authStateService.fetchCurrentUser().subscribe();
+    }
   })
   ]
 };

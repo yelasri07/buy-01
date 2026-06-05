@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
+import { loginRegisterGuard } from './core/guards/login-register.guard';
 
 export const routes: Routes = [
   {
     path: 'auth',
+    canActivate: [loginRegisterGuard],
     loadComponent: () =>
       import('./features/auth/auth.component').then((m) => m.AuthComponent),
     loadChildren: () =>
