@@ -42,7 +42,12 @@
       [alt]="product().name"
       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
     />
+    @if (product().status == 'PENDING'){
 
+      <div class="absolute -left-8 bottom-4 w-32 rotate-[45deg] bg-amber-500 text-white text-center py-1 text-sm font-bold shadow-md select-none">
+        PENDING
+      </div>
+    }
     @if (isOutOfStock()) {
       <div
         class="absolute inset-0 flex items-center justify-center bg-dark/40 backdrop-blur-[2px]"
@@ -107,9 +112,9 @@
       </div>
     </div>
 
-    <div>
+    <!-- <div>
       {{ product().status }}
-    </div>
+    </div> -->
 
     <!-- Action Button -->
     <button
