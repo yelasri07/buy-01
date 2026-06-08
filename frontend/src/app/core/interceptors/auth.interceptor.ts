@@ -15,8 +15,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError(err => {
-      if (err.status === 401) {
-        console.error(err);
+      const excludedPaths = ['/auth', '/auth/login', '/auth/register', '/feed', '/'];
+      if (err.status === 401 && !excludedPaths.includes(location.pathname)) {
         storageService.clearAuth()
         router.navigateByUrl('/auth/login')
       }

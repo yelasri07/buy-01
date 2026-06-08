@@ -12,15 +12,20 @@ import { ProductOptionsComponent } from '../../../../shared/components/product-o
 import { AuthStateService } from '../../../../core/services/auth-state.service';
 import { CreateProductComponent } from '../../../../shared/components/create-product/create-product.component';
 import '@tailwindplus/elements';
+import { Router, RouterLink } from '@angular/router';
+import { PopupService } from '../../../../core/services/popup.service';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CurrencyPipe, ProductOptionsComponent, CreateProductComponent],
+  imports: [CurrencyPipe, ProductOptionsComponent, CreateProductComponent, RouterLink],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProductCardComponent {
+  private popupService = inject(PopupService)
+  private router = inject(Router)
+
   product = input.required<Product>();
   currentUser = inject(AuthStateService);
   selectedImageIndex = signal(0);
@@ -53,8 +58,14 @@ export class ProductCardComponent {
     this.selectedImageIndex.set(index);
   }
 
-  isLowStock = computed(
-    () => this.product().quantity > 0 && this.product().quantity < 5,
-  );
   isOutOfStock = computed(() => this.product().quantity === 0);
+
+  navigateToProfile() {
+    if (!this.currentUser.isAuthenticated()) {
+      this.popupService.showError('You should login to access seller profile.')
+      return
+    }
+
+    this.router.navigate(['/profile', this.product().user_id])
+  }
 }

@@ -18,11 +18,7 @@ export const appConfig: ApplicationConfig = {
   provideAppInitializer(() => {
     inject(DialogService)
     const authStateService = inject(AuthStateService)
-
-    const excludedPaths = ['/auth', '/auth/login', '/auth/register', '/feed', '/'];
-    if (!excludedPaths.includes(location.pathname)) {
-      authStateService.fetchCurrentUser().subscribe();
-    }
+    authStateService.fetchCurrentUser().subscribe();
   })
   ]
 };
