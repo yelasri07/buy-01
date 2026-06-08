@@ -31,6 +31,7 @@ public class UserService {
     }
 
     public Map<String, Object> updateAvatar(AvatarInput avatarInput) {
+        
         User user = userRepository.findById(avatarInput.userId()).get();
         user.setAvatarUrl(avatarInput.avatarUrl());
         userRepository.save(user);

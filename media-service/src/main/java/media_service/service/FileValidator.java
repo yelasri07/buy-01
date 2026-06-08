@@ -15,7 +15,7 @@ public class FileValidator {
             // Detect based on actual file content (magic bytes)
             String detectedType = TIKA.detect(file.getInputStream());
             
-            if (!detectedType.startsWith("image/")) {
+            if ( detectedType.startsWith("image/svg") || !detectedType.startsWith("image/") ) {
                 throw new BadRequestException("Invalid file type. Only images are allowed.");
             }
         } catch (IOException e) {
