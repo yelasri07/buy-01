@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthStateService } from '../../core/services/auth-state.service';
 import { User, userRole } from '../../core/interfaces/user.interface';
 import { ProductListComponent } from "../home/components/product-list/product-list.component";
@@ -11,7 +11,7 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
-  imports: [ProductListComponent, PaginatorComponent, CreateProductComponent],
+  imports: [ProductListComponent, PaginatorComponent, CreateProductComponent, RouterLink],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
