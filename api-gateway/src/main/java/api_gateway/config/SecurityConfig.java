@@ -32,7 +32,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                                 .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("SELLER")
                                                 .requestMatchers(HttpMethod.DELETE, "/api/products/**")
                                                 .hasRole("SELLER")
-                                                .requestMatchers(HttpMethod.PUT, "/users/me")
+                                                .requestMatchers(HttpMethod.POST, "/media")
                                                 .hasRole("SELLER")
                                                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                                                 .anyRequest().authenticated())
@@ -48,7 +48,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         @Override
         public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                                .allowedOrigins("http://localhost:4200")
+                                .allowedOrigins("https://localhost:4200")
                                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                                 .allowedHeaders("*")
                                 .allowCredentials(true);
