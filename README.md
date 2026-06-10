@@ -71,6 +71,7 @@ DB_USERNAME=buy01
 DB_PASSWORD=buy01
 DB_NAME=buy01
 CLOUDINARY_URL=your_cloudinary_url_here
+SSL_PASSWORD=
 ```
 
 ### 2. Build the Services
