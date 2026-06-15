@@ -71,7 +71,6 @@ DB_USERNAME=buy01
 DB_PASSWORD=buy01
 DB_NAME=buy01
 CLOUDINARY_URL=your_cloudinary_url_here
-SSL_PASSWORD=
 ```
 
 ### 2. Build the Services
@@ -81,21 +80,14 @@ chmod +x build.sh
 ./build.sh
 ```
 
-### 3. Launch the Infrastructure
+### 3. Launch the application
 Run the entire system using Docker Compose:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 *Note: The services will wait for the Discovery Service to be healthy before starting.*
 
-### 4. Start the Frontend
-Navigate to the frontend directory and start the development server:
-```bash
-cd frontend
-npm install
-npm start
-```
-The application will be available at `http://localhost:4200`.
+The application will be available at `https://localhost:4200`.
 
 ---
 
@@ -119,7 +111,6 @@ The **API Gateway** (Port 8080) routes traffic to the following endpoints:
 - `build.sh`: Packages all Spring Boot services using Maven Wrapper.
 - `docker_clean.sh`: Forcefully stops and removes all containers, images, and volumes.
 - `run_docker_dns.sh`: Helper to restart Docker with custom DNS settings (if needed for registry access).
-- `setup.sh`: Quick build and deploy script.
 
 ---
 
