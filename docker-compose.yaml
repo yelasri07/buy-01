@@ -49,6 +49,13 @@ services:
     # ports:
     #   - 8080:8080
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "9000:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
   user-db:
     image: mongo
     container_name: user_mongodb
@@ -147,4 +154,5 @@ volumes:
   user_mongodb_data:
   product_mongodb_data:
   media_mongodb_data:
+  jenkins_home:
   # kafka-data:
