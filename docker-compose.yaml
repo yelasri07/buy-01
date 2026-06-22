@@ -63,7 +63,7 @@ services:
       - POST=1
       - BUILD=1
       - PULL=1
-      - EXEC=0
+      - EXEC=1
       - COMMIT=0
       - CONFIGS=0
       - SECRETS=0
@@ -76,8 +76,10 @@ services:
 
   jenkins:
     image: jenkins/jenkins:lts
+    user: root
     ports:
       - "9000:8080"
+      - "50000:50000"
     restart: always
     environment:
       - DOCKER_HOST=tcp://docker-proxy:2375
