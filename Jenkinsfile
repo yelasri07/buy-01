@@ -15,10 +15,8 @@ pipeline {
                 export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
                 export PATH=$JAVA_HOME/bin:$PATH
                 java -version
-                cd user-service
-                ./mvnw -version
+                ./build.sh
                 '''
-                // ./build.sh
             }
         }
         stage('Test') {
