@@ -6,10 +6,6 @@ pipeline {
         }
     }
 
-    tools {
-        nodejs "node"
-    }
-
     triggers {
         pollSCM('* * * * *')
     }
