@@ -51,22 +51,17 @@ public class AuthService {
 
 
     public Map<String, Object> login(String email, String password) {
-            System.out.println("#############################0");
 
         var auth = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(email, password));
-            System.out.println("#############################1");
 
         Map<String, Object> response = new HashMap<>();
         User user = (User) auth.getPrincipal();
-            System.out.println("#############################2");
 
         String jws = jwtService.generateToken(user);
-            System.out.println("#############################3");
 
         response.put("token", jws);
         response.put("message", "User logged in successfully");
-            System.out.println("#############################4");
 
         return response;
 
