@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh '''
-                echo "Hello woooorld.."
+                node -v
                 '''
             }
         }
