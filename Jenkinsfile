@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh '''
-                echo "doing build stuff.."
+                ./build.sh
                 '''
             }
         }
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 echo 'Testing..'
                 sh '''
-                echo "doing test stuff.."
+                ./test.sh
                 '''
             }
         }
