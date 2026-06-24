@@ -74,6 +74,7 @@ services:
   #     - PLUGINS=0
   #     - SYSTEM=0
 
+
   jenkins:
     image: jenkins/jenkins:lts
     user: root
