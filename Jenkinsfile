@@ -1,9 +1,5 @@
 pipeline {
 
-    option {
-
-    }
-
     agent {
         node {
             label 'docker-agent'
