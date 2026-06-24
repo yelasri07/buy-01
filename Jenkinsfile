@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             agent {
                 // This automatically spins up a Java 17 environment for this stage
-                docker { image 'eclipse-temurin:17-jdk' }
+                dockerContainer { image 'eclipse-temurin:17-jdk' }
             }
             steps {
                 echo 'Building..'
@@ -23,7 +23,7 @@ pipeline {
         stage('Test') {
             agent {
                 // This automatically spins up a Java 17 environment for this stage
-                docker { image 'eclipse-temurin:17-jdk' }
+                dockerContainer { image 'eclipse-temurin:17-jdk' }
             }
             steps {
                 echo 'Testing..'
