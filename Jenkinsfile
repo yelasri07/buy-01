@@ -7,11 +7,12 @@ pipeline {
     triggers {
         pollSCM '* * * * *'
     }
-    tools {
-        jdk 'JDK17' // Matches the name you gave it in Global Tools
-    }
     stages {
         stage('Build') {
+            agent {
+                // This automatically spins up a Java 17 environment for this stage
+                docker { image 'eclipse-temurin:17-jdk' }
+            }
             steps {
                 echo 'Building..'
                 sh '''
@@ -20,6 +21,10 @@ pipeline {
             }
         }
         stage('Test') {
+            agent {
+                // This automatically spins up a Java 17 environment for this stage
+                docker { image 'eclipse-temurin:17-jdk' }
+            }
             steps {
                 echo 'Testing..'
                 sh '''
