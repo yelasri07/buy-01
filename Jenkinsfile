@@ -29,10 +29,17 @@ pipeline {
         }
         stage('Deliver') {
             steps {
-                echo 'Deliver....'
-                sh '''
-                echo "doing delivery stuff.."
-                '''
+                withCredentials([
+                    file(credentialsId: 'buy01-env-file', variable: 'ENV_FILE')
+                ]) {
+                    echo 'Deliver....'
+                    sh '''
+                    cp $ENV_FILE .env
+                    docker compose down
+                    docker compose up -d --build
+                    rm -f .env
+                    '''
+                }
             }
         }
     }
