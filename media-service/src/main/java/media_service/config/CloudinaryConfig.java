@@ -13,10 +13,6 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary cloudinary(){
-        System.out.println("##########################################");
-        System.out.println(cloudUrl);
-        System.out.println("##########################################");
-
         return new Cloudinary(cloudUrl);
     }
 }
