@@ -12,11 +12,11 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh '''
-                export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
-                export PATH=$JAVA_HOME/bin:$PATH
-                java -version
                 ./build.sh
                 '''
+                // export JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64
+                // export PATH=$JAVA_HOME/bin:$PATH
+                // java -version
             }
         }
         stage('Test') {
@@ -33,12 +33,12 @@ pipeline {
                     file(credentialsId: 'buy01-env-file', variable: 'ENV_FILE')
                 ]) {
                     echo 'Deliver....'
-                    sh '''
-                    cp $ENV_FILE .env
-                    docker compose down
-                    docker compose up -d --build
-                    rm -f .env
-                    '''
+                    // sh '''
+                    // cp $ENV_FILE .env
+                    // docker compose down
+                    // docker compose up -d --build
+                    // rm -f .env
+                    // '''
                 }
             }
         }
