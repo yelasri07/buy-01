@@ -4,12 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 
 import product_service.dto.UserDTO;
 import product_service.dto.ProductDTO.ProductInput;
@@ -118,13 +120,49 @@ public class ProductServiceTest {
             // Arrange
             final int page = 0;
             final int size = 10;
-            when(productRepository.findByStatus(any(), any()).getContent())
-                    .thenReturn(List.of(productResponse));
-            // when(null);
-            
+            when(productRepository.findByStatus(any(), any()))
+                    .thenReturn(new PageImpl<Product>(List.of(productResponse)));
+            when(userClient.getUserProducts(any()))
+                    .thenReturn(Map.of("user-123", userResponse));
+            when(mediaClient.getMediaProducts(any()))
+                    .thenReturn(Map.of("media-123", List.of("url1", "url2"), "media-456", List.of("url3", "url4")));
+
             // Act
+            List<ProductOutput> products = productService.getProducts(page, size, null);
 
             // Assert
+            assertNotNull(products);
+            assertEquals(1, products.size());
+            verify(productRepository).findByStatus(any(), any());
+            verify(productRepository, times(0)).findByUserId(any(), any());
+            verify(userClient).getUserProducts(any());
+            verify(mediaClient).getMediaProducts(any());
+        }
+
+        @Test
+        @DisplayName("Should get profile products successfully")
+        void shouldGetPtofileProductsSuccessfully() {
+            // Arrange
+            final int page = 0;
+            final int size = 10;
+            final String userId = "user-123";
+            when(productRepository.findByUserId(any(), any()))
+                    .thenReturn(new PageImpl<Product>(List.of(productResponse)));
+            when(userClient.getUserProducts(any()))
+                    .thenReturn(Map.of("user-123", userResponse));
+            when(mediaClient.getMediaProducts(any()))
+                    .thenReturn(Map.of("media-123", List.of("url1", "url2"), "media-456", List.of("url3", "url4")));
+
+            // Act
+            List<ProductOutput> products = productService.getProducts(page, size, userId);
+
+            // Assert
+            assertNotNull(products);
+            assertEquals(1, products.size());
+            verify(productRepository).findByUserId(any(), any());
+            verify(productRepository, times(0)).findByStatus(any(), any());
+            verify(userClient).getUserProducts(any());
+            verify(mediaClient).getMediaProducts(any());
         }
 
         @Test
