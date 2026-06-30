@@ -39,16 +39,16 @@ pipeline {
                     sh '''
                     cp $ENV_FILE .env
 
-                    cp $SSL_CERT angular-app/secureCertificate.crt
-                    cp $SSL_KEY angular-app/private.key
-                    cp $SSL_PASSPHRASE angular-app/securePassphrase
+                    cp $SSL_CERT frontend/secureCertificate.crt
+                    cp $SSL_KEY frontend/private.key
+                    cp $SSL_PASSPHRASE frontend/securePassphrase
 
                     docker compose down
                     docker compose up -d --build
                     rm -f .env
-                    rm -f angular-app/secureCertificate.crt
-                    rm -f angular-app/private.key
-                    rm -f angular-app/securePassphrase
+                    rm -f frontend/secureCertificate.crt
+                    rm -f frontend/private.key
+                    rm -f frontend/securePassphrase
                     '''
                 }
             }
