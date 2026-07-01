@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                // sh './build.sh'
+            // sh './build.sh'
             }
         }
 
@@ -63,52 +63,52 @@ pipeline {
         //                         cp "$SSL_KEY" frontend/private.key
         //                         cp "$SSL_PASSPHRASE" frontend/securePassphrase
 
-        //                         ./build.sh
-        //                         docker compose up -d --build
-        //                     '''
-        //                     error "Deployment failed, rolled back to previous successful commit ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
-        //                 } finally {
-        //                     sh '''
-        //                         rm -f .env
-        //                         rm -f frontend/secureCertificate.crt
-        //                         rm -f frontend/private.key
-        //                         rm -f frontend/securePassphrase
-        //                     '''
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+    //                         ./build.sh
+    //                         docker compose up -d --build
+    //                     '''
+    //                     error "Deployment failed, rolled back to previous successful commit ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}"
+    //                 } finally {
+    //                     sh '''
+    //                         rm -f .env
+    //                         rm -f frontend/secureCertificate.crt
+    //                         rm -f frontend/private.key
+    //                         rm -f frontend/securePassphrase
+    //                     '''
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     }
 
     post {
         success {
-            mail to: 'adnane.elmir1@gmail.com'
-                subject: "✅ BUILD SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                    <h2>Build Succeeded</h2>
-                    <p><b>Job:</b> ${env.JOB_NAME}</p>
-                    <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
-                    <p><b>Commit:</b> ${env.GIT_COMMIT}</p>
-                    <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
-                    <p><a href="${env.BUILD_URL}">View Build Logs</a></p>
-                """,
-                mimeType: 'text/html',
-            
+            script {
+                try {
+                    emailext(
+                    to: env.NOTIFICATION_EMAIL,
+                    subject: "Build ${status}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: "Status: ${status}\nURL: ${env.BUILD_URL}\n\n${message}",
+                    mimeType: 'text/plain'
+                    )
+                } catch (err) {
+                    mail(to: env.NOTIFICATION_EMAIL, subject: "Build ${status}", body: message)
+                }
+            }
         }
-        failure {
-            mail to: 'adnane.elmir1@gmail.com'
-                subject: "❌ BUILD FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                    <h2>Build Failed</h2>
-                    <p><b>Job:</b> ${env.JOB_NAME}</p>
-                    <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
-                    <p><b>Commit:</b> ${env.GIT_COMMIT}</p>
-                    <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
-                    <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
-                """,
-                mimeType: 'text/html',
-        
-        }
+        // failure {
+        //     mail to: 'adnane.elmir1@gmail.com'
+        //         subject: "❌ BUILD FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        //         body: """
+        //             <h2>Build Failed</h2>
+        //             <p><b>Job:</b> ${env.JOB_NAME}</p>
+        //             <p><b>Build:</b> #${env.BUILD_NUMBER}</p>
+        //             <p><b>Commit:</b> ${env.GIT_COMMIT}</p>
+        //             <p><b>Branch:</b> ${env.GIT_BRANCH}</p>
+        //             <p><a href="${env.BUILD_URL}console">View Console Output</a></p>
+        //         """,
+        //         mimeType: 'text/html',
+
+    // }
     }
 }
