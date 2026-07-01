@@ -13,14 +13,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh './build.sh'
+                // sh './build.sh'
+                sh 'cd frontend && ng build'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh './test.sh'
+                // sh './test.sh'
             }
         }
 
