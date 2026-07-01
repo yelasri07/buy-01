@@ -86,13 +86,13 @@ pipeline {
             script {
                 try {
                     emailext(
-                    to: env.NOTIFICATION_EMAIL,
-                    subject: "Build ${status}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    body: "Status: ${status}\nURL: ${env.BUILD_URL}\n\n${message}",
+                    to: "adnane.elmir1@gmail.com",
+                    subject: "Build success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: "Status: success\nURL: ${env.BUILD_URL}\n\nmessage test",
                     mimeType: 'text/plain'
                     )
                 } catch (err) {
-                    mail(to: env.NOTIFICATION_EMAIL, subject: "Build ${status}", body: message)
+                    mail(to: "adnane.elmir1@gmail.com", subject: "Build success", body: "test")
                 }
             }
         }
