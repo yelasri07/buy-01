@@ -15,7 +15,7 @@ export class LoginComponent {
   private router = inject(Router);
 
   loginForm = new FormGroup({
-    email: new FormControl(""),
+    email: new FormControl("a"),
     password: new FormControl("")
   });
 
