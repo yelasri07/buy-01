@@ -42,7 +42,9 @@ pipeline {
 
                     sh '''
                         cp "$ENV_FILE" .env
-                   
+                        cp "$SSL_CERT" frontend/secureCertificate.crt
+                        cp "$SSL_KEY" frontend/private.key
+                        cp "$SSL_PASSPHRASE" frontend/securePassphrase
                     '''
 
                     script {
