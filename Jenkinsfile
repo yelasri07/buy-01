@@ -15,9 +15,11 @@ pipeline {
             steps {
                 echo 'Building..'
                 // sh './build.sh'
-                sh 'cd frontend'
-                sh 'npm i'
-                sh 'ng build'
+                sh '''
+                cd frontend
+                npm i
+                ng build
+                '''
             }
         }
 
@@ -25,7 +27,7 @@ pipeline {
             steps {
                 echo 'Testing..'
                 // sh './test.sh'
-                sh 'ng test --watch=false'
+                sh 'cd frontend && ng test --watch=false'
             }
         }
 
